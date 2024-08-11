@@ -5,7 +5,7 @@ using System;
 [RequireComponent(typeof(AudioSource))]
 public abstract class Interactable : MonoBehaviour
 {
-    public string InteractText;
+    [HideInInspector] public string InteractText;
     /// <summary>
     /// Была ли последняя интеракия с объектом
     /// </summary>

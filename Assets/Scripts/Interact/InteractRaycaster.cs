@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Camera))]
 [DisallowMultipleComponent]
@@ -9,6 +10,7 @@ public class InteractRaycaster : MonoBehaviour
     private Interactable _interactable;
     private GameObject _currentHit;
     private RaycastHit _hit;
+    [SerializeField] private Text _guideText;
     private void Awake()
     {
         _mainCamera = this.gameObject;
@@ -29,6 +31,7 @@ public class InteractRaycaster : MonoBehaviour
                 else
                 {
                     _interactable.OnFocus();
+                    _guideText.text = _interactable.InteractText;
 
                     if (Input.GetKeyDown(KeyCode.E))
                     {
@@ -38,12 +41,14 @@ public class InteractRaycaster : MonoBehaviour
             }
             else
             {
+                _guideText.text = "";
                 _interactable?.OnLoseFocus();
                 _interactable = null;
             }
         }
         else
         {
+            _guideText.text = "";
             _interactable?.OnLoseFocus();
             _interactable = null;
         }
