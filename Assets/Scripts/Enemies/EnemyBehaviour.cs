@@ -24,6 +24,7 @@ public abstract class EnemyBehaviour : MonoBehaviour
     [SerializeField] protected List<float> clipList;
     [NonSerialized] protected bool isDead;
     [NonSerialized] protected float timer;
+    [NonSerialized] protected float totalCooldownTimer;
     #endregion
     #region components
     [SerializeField] protected List<VisualEffect> vfxList;
@@ -44,11 +45,12 @@ public abstract class EnemyBehaviour : MonoBehaviour
         target = GameObject.FindWithTag("Player").transform;
         currentHP = maxHP;
         isDead = false;
-        agent.speed=movSpeedList[0];
+        agent.speed = movSpeedList[0];
+        totalCooldownTimer = 0f;
     }
     protected virtual void Update()
     {
-        distanceToPlayer = Vector3.Distance(gameObject.transform.position,target.transform.position);
+        distanceToPlayer = Vector3.Distance(gameObject.transform.position, target.transform.position);
     }
     public virtual IEnumerator C_TakeDamage(float receivedDamage)
     {

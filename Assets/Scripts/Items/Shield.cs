@@ -10,11 +10,11 @@ public class Shield : ItemBehaviour
     }
     public override void GetEffect()
     {
-        playerStats.MaxArmor += 20;
+        playerStats.JumpForce += 20;
     }
 
     public override void LoseEffect()
     {
-        playerStats.MaxArmor -= 20;
+        playerStats.JumpForce -= 20;
     }
 }

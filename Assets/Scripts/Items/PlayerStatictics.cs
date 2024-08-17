@@ -15,18 +15,17 @@ public class PlayerStatictics : MonoBehaviour
     #region params
     [Header("Parameters")]
     public float MaxHP;
-    [NonSerialized] private float _currentHP;
-    public float MaxArmor;
-    [NonSerialized] private float _currentArmor;
+    private float _currentHP;
     [SerializeField][Min(0.1f)] private float _armorStartTimeRegen;
     [SerializeField][Min(0.1f)] private float _armorTickPeriodRegen;
-    [NonSerialized] private bool _invincibility = false;
+    private bool _invincibility = false;
     [SerializeField][Range(0.1f, 40f)] private float _invincibilityPeriod;
-    [NonSerialized] private static HashSet<ItemBehaviour> _playerItems;
+    private static HashSet<ItemBehaviour> _playerItems;
     #endregion
     [Header("UI")]
     [SerializeField] private Canvas _playerCanvas;
     [SerializeField] private GameObject _itemImagePrefab;
+    [SerializeField] private UnityEngine.UI.Text _healthText;
     private static List<GameObject> _uiPrefabs = new List<GameObject>();
     public Vector3 Offset;
 
@@ -34,37 +33,19 @@ public class PlayerStatictics : MonoBehaviour
     {
         _playerItems = new HashSet<ItemBehaviour>();
         _currentHP = MaxHP;
-        _currentArmor = MaxArmor;
+
+        _healthText.text = _currentHP.ToString();
     }
 
     public void TakeDamage(float inflictedDamage)
     {
         if (_invincibility) { return; }
 
-        float residualDamage = _currentArmor - inflictedDamage;
-        if (residualDamage >= 0)
-        {
-            _currentArmor -= inflictedDamage;
-        }
-        else
-        {
-            _currentArmor -= inflictedDamage - UnityEngine.Mathf.Abs(residualDamage);
-            _currentHP -= UnityEngine.Mathf.Abs(residualDamage);
-        }
-        StopCoroutine(C_ArmorRegeneration());
-        StartCoroutine(C_ArmorRegeneration());
+        _currentHP -= inflictedDamage;
 
         StartCoroutine(C_TemporaryInvinsibility());
-    }
-    private IEnumerator C_ArmorRegeneration()
-    {
-        yield return new WaitForSeconds(_armorStartTimeRegen);
 
-        while (_currentArmor < MaxArmor)
-        {
-            _currentArmor += 1;
-            yield return new WaitForSeconds(_armorTickPeriodRegen);
-        }
+        _healthText.text = _currentHP.ToString();
     }
     private IEnumerator C_TemporaryInvinsibility()
     {
