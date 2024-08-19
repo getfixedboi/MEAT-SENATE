@@ -51,6 +51,8 @@ public abstract class EnemyBehaviour : MonoBehaviour
     protected virtual void Update()
     {
         distanceToPlayer = Vector3.Distance(gameObject.transform.position, target.transform.position);
+        totalCooldownTimer -= Time.deltaTime;
+        timer += Time.deltaTime;
     }
     public virtual IEnumerator C_TakeDamage(float receivedDamage)
     {

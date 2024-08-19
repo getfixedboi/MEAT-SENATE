@@ -11,9 +11,6 @@ public class EnemyOne : EnemyBehaviour
     }
     protected override void Update()
     {
-        totalCooldownTimer -= Time.deltaTime;
-        timer += Time.deltaTime;
-
         base.Update();
         if (distanceToPlayer >= rangeList[0])
         {
