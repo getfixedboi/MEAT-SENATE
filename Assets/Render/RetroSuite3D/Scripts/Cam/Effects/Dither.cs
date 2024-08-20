@@ -27,9 +27,11 @@ namespace Assets.Scripts.Cam.Effects {
 		}
 
 		private void Start() {
-			if (!SystemInfo.supportsImageEffects)
+#pragma warning disable CS0618 // Тип или член устарел
+            if (!SystemInfo.supportsImageEffects)
 				enabled = false;
-		}
+#pragma warning restore CS0618 // Тип или член устарел
+        }
 
 		public void OnRenderImage(RenderTexture src, RenderTexture dest) {
 			if (material) {
