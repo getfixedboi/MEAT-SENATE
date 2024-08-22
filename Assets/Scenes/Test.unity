@@ -602,8 +602,8 @@ MonoBehaviour:
   movSpeedList:
   - 1.15
   damageList:
-  - 0
-  - 0
+  - 3
+  - 6
   attackSpeedList:
   - 5
   cooldownList:

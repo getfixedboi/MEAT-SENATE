@@ -15,10 +15,12 @@ public class EnemyTwo : EnemyBehaviour
         base.Update();
         if (distanceToPlayer >= rangeList[0])
         {
+            agent.speed = movSpeedList[0];
             agent.SetDestination(gameObject.transform.position);
         }
         else if (distanceToPlayer <= rangeList[0] && distanceToPlayer >= rangeList[1])
         {
+            agent.speed = movSpeedList[0];
             agent.SetDestination(target.position);
         }
         else if (distanceToPlayer <= rangeList[1])
