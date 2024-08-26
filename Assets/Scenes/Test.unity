@@ -605,7 +605,7 @@ MonoBehaviour:
   - 3
   - 6
   attackSpeedList:
-  - 5
+  - 10
   cooldownList:
   - 2
   rangeList:

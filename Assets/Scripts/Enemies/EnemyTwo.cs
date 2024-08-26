@@ -36,6 +36,7 @@ public class EnemyTwo : EnemyBehaviour
 
     private void Shoot()
     {
+        transform.LookAt(target);
         totalCooldownTimer = cooldownList[0];
 
         GameObject bullet = GameObject.Instantiate(_projectile, gameObject.transform.position, new Quaternion());
