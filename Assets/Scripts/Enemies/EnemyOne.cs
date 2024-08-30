@@ -51,14 +51,12 @@ public class EnemyOne : EnemyBehaviour
     {
         totalCooldownTimer = cooldownList[0];
         timer = 0;
-        Debug.Log($"deal to player some damage: {damageList[0]}");
         target.gameObject.GetComponent<PlayerStatictics>().TakeDamage(damageList[0]);
     }
     private void HeavyAttack()
     {
         totalCooldownTimer = cooldownList[1];
         timer = 0;
-        Debug.Log($"deal to player some damage: {damageList[1]}");
         target.gameObject.GetComponent<PlayerStatictics>().TakeDamage(damageList[1]);
     }
 }

@@ -16,6 +16,7 @@ public class ShowItemDescOnUI : MonoBehaviour, IPointerEnterHandler, IPointerExi
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        Debug.Log(1);
         // Устанавливаем текст в префабе
         prefabToShow.GetComponentInChildren<Text>().text = GetComponent<ItemBehaviour>().GetDesc();
 
