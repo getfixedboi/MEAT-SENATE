@@ -63,7 +63,7 @@ public abstract class ItemBehaviour : Interactable
     public abstract void LoseEffect();
     public string GetDesc()
     {
-        return $"{itemName} +\n {itemDescription}";
+        return $"{itemName} "+"\n {itemDescription}";
     }
     public Sprite GetSprite()
     {

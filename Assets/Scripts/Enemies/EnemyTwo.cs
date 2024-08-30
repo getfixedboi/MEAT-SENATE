@@ -20,13 +20,17 @@ public class EnemyTwo : EnemyBehaviour
         }
         else if (distanceToPlayer <= rangeList[0] && distanceToPlayer >= rangeList[1])
         {
+            agent.enabled = true;
             agent.speed = movSpeedList[0];
+
             agent.SetDestination(target.position);
         }
         else if (distanceToPlayer <= rangeList[1])
         {
             agent.speed = 0;
-            agent.SetDestination(gameObject.transform.position);
+
+            agent.enabled = false;
+            transform.LookAt(target.position);
 
             if (totalCooldownTimer >= 0) { return; }
 
@@ -36,7 +40,7 @@ public class EnemyTwo : EnemyBehaviour
 
     private void Shoot()
     {
-        transform.LookAt(target);
+
         totalCooldownTimer = cooldownList[0];
 
         GameObject bullet = GameObject.Instantiate(_projectile, gameObject.transform.position, new Quaternion());

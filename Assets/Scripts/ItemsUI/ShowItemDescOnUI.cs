@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class ShowItemDescOnUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    public GameObject prefabToShow;  // Префаб, который будет появляться
+    public GameObject prefabToShow;  // Префаб, который будет появляться 
     private GameObject instantiatedPrefab;
     public Canvas Canvas;  // Убедитесь, что это ваш Canvas
 
