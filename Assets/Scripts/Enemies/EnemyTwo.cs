@@ -1,36 +1,44 @@
-using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class EnemyTwo : EnemyBehaviour
 {
     [SerializeField] private GameObject _projectile;
+
+    private float sideMovementTimer = 0f;  // Таймер для управления движением влево-вправо
+    private float sideMovementDuration = 1f;  // Продолжительность движения в одном направлении
+    private bool movingRight = true;  // Следим за тем, движется ли враг вправо или влево
+
+    private float pauseTimer = 0f;  // Таймер для перерыва между движениями
+    private float pauseDuration = 0.5f;  // Длительность перерыва между движениями
+
     protected override void Awake()
     {
         maxHP = 2;
         base.Awake();
+        agent.stoppingDistance = rangeList[1];
     }
+
     protected override void Update()
     {
         base.Update();
+
         if (distanceToPlayer >= rangeList[0])
         {
             agent.speed = movSpeedList[0];
-            agent.SetDestination(gameObject.transform.position);
+            agent.SetDestination(transform.position);
+            agent.updateRotation = true;
         }
         else if (distanceToPlayer <= rangeList[0] && distanceToPlayer >= rangeList[1])
         {
-            agent.enabled = true;
             agent.speed = movSpeedList[0];
-
             agent.SetDestination(target.position);
+            SelfRotateTowardsTarget();
         }
-        else if (distanceToPlayer <= rangeList[1])
+        else
         {
-            agent.speed = 0;
-
-            agent.enabled = false;
-            transform.LookAt(target.position);
+            SideToSideMovement();
+            SelfRotateTowardsTarget();
 
             if (totalCooldownTimer >= 0) { return; }
 
@@ -40,15 +48,46 @@ public class EnemyTwo : EnemyBehaviour
 
     private void Shoot()
     {
-
         totalCooldownTimer = cooldownList[0];
 
-        GameObject bullet = GameObject.Instantiate(_projectile, gameObject.transform.position, new Quaternion());
+        GameObject bullet = Instantiate(_projectile, transform.position, Quaternion.identity);
         bullet.GetComponent<EnemyProjectile>().Damage = damageList[0];
 
-        Vector3 direction = (target.position - gameObject.transform.position).normalized;
+        Vector3 direction = (target.position - transform.position).normalized;
+        bullet.GetComponent<Rigidbody>().velocity = direction * attackSpeedList[0];
+    }
 
-        float bulletSpeed = attackSpeedList[0];
-        bullet.GetComponent<Rigidbody>().velocity = direction * bulletSpeed;
+    private void SelfRotateTowardsTarget()
+    {
+        agent.updateRotation = false;
+        Vector3 direction = (target.position - transform.position).normalized;
+        direction.y = 0;
+        Quaternion targetRotation = Quaternion.LookRotation(direction);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 10 * Time.deltaTime);
+    }
+
+    // Функция для управления движением влево-вправо с перерывами и случайным выбором направления
+    private void SideToSideMovement()
+    {
+        // Если перерыв между движениями еще не закончен
+        if (pauseTimer > 0)
+        {
+            pauseTimer -= Time.deltaTime;
+            return;
+        }
+
+        sideMovementTimer += Time.deltaTime;
+
+        if (sideMovementTimer >= sideMovementDuration)
+        {
+            // Случайный выбор направления движения
+            movingRight = Random.value > 0.5f;
+            sideMovementTimer = 0f;
+            pauseTimer = pauseDuration;  // Устанавливаем перерыв
+        }
+
+        // Рассчитываем направление бокового движения
+        Vector3 sideDirection = movingRight ? transform.right : -transform.right;
+        transform.position += sideDirection * movSpeedList[0] * Time.deltaTime;
     }
 }
