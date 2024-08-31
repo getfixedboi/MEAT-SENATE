@@ -4,14 +4,13 @@ using UnityEngine.AI;
 public class EnemyTwo : EnemyBehaviour
 {
     [SerializeField] private GameObject _projectile;
-
+    #region dodge
     private float sideMovementTimer = 0f;  // Таймер для управления движением влево-вправо
     private float sideMovementDuration = 1f;  // Продолжительность движения в одном направлении
-    private bool movingRight = true;  // Следим за тем, движется ли враг вправо или влево
-
     private float pauseTimer = 0f;  // Таймер для перерыва между движениями
     private float pauseDuration = 0.5f;  // Длительность перерыва между движениями
-
+    private float randomValue;
+    #endregion
     protected override void Awake()
     {
         maxHP = 2;
@@ -66,10 +65,8 @@ public class EnemyTwo : EnemyBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 10 * Time.deltaTime);
     }
 
-    // Функция для управления движением влево-вправо с перерывами и случайным выбором направления
     private void SideToSideMovement()
     {
-        // Если перерыв между движениями еще не закончен
         if (pauseTimer > 0)
         {
             pauseTimer -= Time.deltaTime;
@@ -80,14 +77,32 @@ public class EnemyTwo : EnemyBehaviour
 
         if (sideMovementTimer >= sideMovementDuration)
         {
-            // Случайный выбор направления движения
-            movingRight = Random.value > 0.5f;
+            randomValue = Random.value;
             sideMovementTimer = 0f;
-            pauseTimer = pauseDuration;  // Устанавливаем перерыв
+            pauseTimer = pauseDuration;  // перерыв
         }
 
-        // Рассчитываем направление бокового движения
-        Vector3 sideDirection = movingRight ? transform.right : -transform.right;
+        Vector3 sideDirection;
+        if (randomValue < 0.2)//вправо
+        {
+            sideDirection = transform.right;
+        }
+        else if (randomValue < .4 && randomValue > .2)//влево
+        {
+            sideDirection = -transform.right;
+        }
+        else if (randomValue < .6 && randomValue > .4)//назад
+        {
+            sideDirection = -transform.forward;
+        }
+        else if (randomValue < .8 && randomValue > .6)//вправо назад
+        {
+            sideDirection = -transform.forward + transform.right;
+        }
+        else //влево назад
+        {
+            sideDirection = -transform.forward - transform.right;
+        }
         transform.position += sideDirection * movSpeedList[0] * Time.deltaTime;
     }
 }
