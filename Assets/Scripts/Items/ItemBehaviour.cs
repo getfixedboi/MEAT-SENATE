@@ -9,11 +9,10 @@ public abstract class ItemBehaviour : Interactable
     protected Sprite itemSprite;//название спрайта должно быть точно таким же как и название класса(предмета) для которого спрайт нужен
     protected string itemName;
     protected string itemDescription;
-    private bool testBool = false;
     protected override void Awake()
     {
         base.Awake();
-        itemSprite = Resources.Load<Sprite>($"{GetType().Name}.png");
+        itemSprite = Resources.Load<Sprite>(GetType().Name);
         playerStats = GameObject.FindWithTag("Player").GetComponent<PlayerStatictics>();
     }
     protected void OnGet()
@@ -46,24 +45,20 @@ public abstract class ItemBehaviour : Interactable
     }
     public override sealed void OnInteract()
     {
-        if (testBool)
+        try
         {
-            testBool=false;
-            OnDrop();
-        }
-        else
-        {
-            testBool=true;
             OnGet();
         }
-        //OnLoseFocus();
-        //Destroy(gameObject);
+        catch (ArgumentException)
+        {
+            OnDrop();
+        }
     }
     public abstract void GetEffect();
     public abstract void LoseEffect();
     public string GetDesc()
     {
-        return $"{itemName} "+"\n {itemDescription}";
+        return $"{itemName} " + "\n {itemDescription}";
     }
     public Sprite GetSprite()
     {
