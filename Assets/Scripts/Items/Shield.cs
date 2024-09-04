@@ -10,12 +10,12 @@ public class Shield : ItemBehaviour
     }
     public override void GetEffect()
     {
-        playerStats.JumpForce += 20;
+        playerStats.JumpForce += 10;
     }
 
     public override void LoseEffect()
     {
-        playerStats.JumpForce -= 20;
+        playerStats.JumpForce -= 10;
     }
 }
 // xuita

@@ -2,23 +2,24 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ShowItemDescOnUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class ShowItemDescOnUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
+    public ItemBehaviour ItemRef;
     public GameObject prefabToShow;  // Префаб, который будет появляться 
     private GameObject instantiatedPrefab;
     public Canvas Canvas;  // Убедитесь, что это ваш Canvas
 
     public Vector3 offset;  // Смещение префаба относительно курсора
+
     public void Start()
     {
-        GetComponent<Image>().sprite = GetComponent<ItemBehaviour>().GetSprite();
+        GetComponent<Image>().sprite = ItemRef.GetSprite();
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Debug.Log(1);
         // Устанавливаем текст в префабе
-        prefabToShow.GetComponentInChildren<Text>().text = GetComponent<ItemBehaviour>().GetDesc();
+        prefabToShow.GetComponentInChildren<Text>().text = ItemRef.GetDesc();
 
         // Создаем префаб и позиционируем его с учетом смещения
         instantiatedPrefab = Instantiate(prefabToShow, Canvas.transform);
@@ -39,6 +40,20 @@ public class ShowItemDescOnUI : MonoBehaviour, IPointerEnterHandler, IPointerExi
         if (instantiatedPrefab != null)
         {
             Destroy(instantiatedPrefab);
+        }
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        // Проверяем, была ли нажата правая кнопка мыши
+        if (eventData.button == PointerEventData.InputButton.Right)
+        {
+            ItemBehaviour itemBehaviour = ItemRef;
+            if (itemBehaviour != null)
+            {
+                // Вызываем OnDrop() для текущего объекта
+                itemBehaviour.OnDrop();
+            }
         }
     }
 

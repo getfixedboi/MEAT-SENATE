@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public abstract class ItemBehaviour : Interactable
@@ -20,24 +21,24 @@ public abstract class ItemBehaviour : Interactable
         playerStats.AddItem(this);
         GetEffect();
     }
-    protected void OnGet(ItemBehaviour item)
+    public void OnGet(ItemBehaviour item)
     {
         playerStats.AddItem(item);
         item.GetEffect();
     }
-    protected void OnDrop()
+    public void OnDrop()
     {
         playerStats.RemoveItem(this);
         LoseEffect();
     }
-    protected void OnDrop(ItemBehaviour item)
+    public void OnDrop(ItemBehaviour item)
     {
         playerStats.RemoveItem(item);
         item.LoseEffect();
     }
     public override sealed void OnFocus()
     {
-        InteractText = "[E] - pick up";
+        InteractText = $"{GetDesc()}" + $"\n\n[E] - Take";
     }
     public override sealed void OnLoseFocus()
     {
@@ -58,7 +59,7 @@ public abstract class ItemBehaviour : Interactable
     public abstract void LoseEffect();
     public string GetDesc()
     {
-        return $"{itemName} " + "\n {itemDescription}";
+        return $"{itemName}" + $"\n{itemDescription}";
     }
     public Sprite GetSprite()
     {
