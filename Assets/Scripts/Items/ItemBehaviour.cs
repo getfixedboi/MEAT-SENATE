@@ -13,7 +13,7 @@ public abstract class ItemBehaviour : Interactable
     protected override void Awake()
     {
         base.Awake();
-        itemSprite = Resources.Load<Sprite>(GetType().Name);
+        itemSprite = Resources.Load<Sprite>($"Sprites/{GetType().Name}");
         playerStats = GameObject.FindWithTag("Player").GetComponent<PlayerStatictics>();
     }
     protected void OnGet()

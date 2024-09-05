@@ -15,7 +15,7 @@ public class PlayerStatictics : MonoBehaviour
     #region params
     [Header("Parameters")]
     public float MaxHP;
-    private float _currentHP;
+    public float СurrentHP;
     private bool _invincibility = false;
     [SerializeField][Range(0.1f, 40f)] private float _invincibilityPeriod;
     private static HashSet<ItemBehaviour> _playerItems;
@@ -30,20 +30,31 @@ public class PlayerStatictics : MonoBehaviour
     private void Awake()
     {
         _playerItems = new HashSet<ItemBehaviour>();
-        _currentHP = MaxHP;
+        СurrentHP = MaxHP;
 
-        _healthText.text = _currentHP.ToString();
+        _healthText.text = MaxHP.ToString() + "/" + СurrentHP.ToString();
+    }
+    private void Update()
+    {
+        _healthText.text = MaxHP.ToString() + "/" + СurrentHP.ToString();
+    }
+
+    public void Heal(float healAmount)
+    {
+        СurrentHP += healAmount;
+        if (СurrentHP > MaxHP)
+        {
+            СurrentHP = MaxHP;
+        }
     }
 
     public void TakeDamage(float inflictedDamage)
     {
         if (_invincibility) { return; }
 
-        _currentHP -= inflictedDamage;
+        СurrentHP -= inflictedDamage;
 
         StartCoroutine(C_TemporaryInvinsibility());
-
-        _healthText.text = _currentHP.ToString();
     }
     private IEnumerator C_TemporaryInvinsibility()
     {

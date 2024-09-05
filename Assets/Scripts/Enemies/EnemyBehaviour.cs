@@ -22,22 +22,28 @@ public abstract class EnemyBehaviour : MonoBehaviour
     [SerializeField] protected List<float> cooldownList;
     [SerializeField] protected List<float> rangeList;
     [SerializeField] protected List<float> clipList;
-    [NonSerialized] protected bool isDead;
-    [NonSerialized] protected float timer;
-    [NonSerialized] protected float totalCooldownTimer;
+    protected bool isDead;
+    protected float timer;
+    protected float totalCooldownTimer;
     #endregion
     #region components
     [SerializeField] protected List<VisualEffect> vfxList;
-    [NonSerialized] protected AudioSource source;
-    [NonSerialized] protected Animator animator;
-    [NonSerialized] protected NavMeshAgent agent;
+    protected AudioSource source;
+    protected Animator animator;
+    protected NavMeshAgent agent;
     #endregion
     #region other
-    [NonSerialized] protected static Transform target;
-    [NonSerialized] protected static float distanceToPlayer;
+    protected static Transform target;
+    protected static float distanceToPlayer;
+    private GameObject _meatPiece;
+    private int _minRange = 2;
+    private int _maxRange = 4;
+
     #endregion
     protected virtual void Awake()
     {
+        _meatPiece = Resources.Load<GameObject>("Prefabs/meatPiece");
+
         source = GetComponent<AudioSource>();
         animator = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
@@ -54,7 +60,7 @@ public abstract class EnemyBehaviour : MonoBehaviour
         totalCooldownTimer -= Time.deltaTime;
         timer += Time.deltaTime;
     }
-    public virtual IEnumerator C_TakeDamage(float receivedDamage)
+    public virtual void TakeDamage(float receivedDamage)
     {
         if (receivedDamage <= 0)
         {
@@ -62,7 +68,6 @@ public abstract class EnemyBehaviour : MonoBehaviour
         }
         else
         {
-            yield return null;
             currentHP -= receivedDamage;
             if (currentHP <= 0)
             {
@@ -72,8 +77,37 @@ public abstract class EnemyBehaviour : MonoBehaviour
     }
     protected virtual IEnumerator C_Death()
     {
+        // Прежде чем уничтожить объект, раскидаем префабы мяса
+        SpawnMeatPieces(UnityEngine.Random.Range(_minRange, _maxRange + 1), 2f); // Спавним 5 кусочков мяса в радиусе 2 единицы
+
         yield return null;
         Debug.Log("ded");
-        Destroy(gameObject);
+        Destroy(gameObject); // Уничтожаем объект
     }
+
+    private void SpawnMeatPieces(int piecesCount, float spawnRadius)
+    {
+        for (int i = 0; i < piecesCount; i++)
+        {
+            // Вычисляем случайную позицию в радиусе вокруг врага
+            Vector3 randomPos = transform.position + UnityEngine.Random.insideUnitSphere * spawnRadius;
+            randomPos.y = transform.position.y; // Оставляем ту же высоту, чтобы не улетало вверх или вниз
+
+            // Создаем клон префаба
+            GameObject meatPieceClone = Instantiate(_meatPiece, randomPos, Quaternion.identity);
+
+            // Добавляем немного физики, чтобы кусочки разлетались
+            Rigidbody rb = meatPieceClone.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                Vector3 randomForce = new Vector3(
+                    UnityEngine.Random.Range(-1f, 1f),
+                    UnityEngine.Random.Range(0.5f, 1.5f), // Чуть больше вверх для естественного "разлета"
+                    UnityEngine.Random.Range(-1f, 1f)
+                );
+                rb.AddForce(randomForce * 4f, ForceMode.Impulse); // Применяем силу для разлета
+            }
+        }
+    }
+
 }
