@@ -45,12 +45,17 @@ public abstract class EnemyBehaviour : MonoBehaviour
     private float _dmgCanvLifetime = .75f;
     private float _ydmgCanvasOffset = 4.8f;
     private bool _isRightSide = false;
+    private Material _onDamageMaterial;
+    private Material _defaultMateral;
 
     #endregion
     protected virtual void Awake()
     {
         _meatPiece = Resources.Load<GameObject>("Prefabs/meatPiece");
         _dmgCanv = Resources.Load<GameObject>("Prefabs/damageCanvas");
+
+        _onDamageMaterial = Resources.Load<Material>("Materials/red");
+        _defaultMateral = Resources.Load<Material>("Materials/purple");
 
         source = GetComponent<AudioSource>();
         animator = GetComponent<Animator>();
@@ -70,7 +75,7 @@ public abstract class EnemyBehaviour : MonoBehaviour
     }
     public virtual void TakeDamage(float receivedDamage)
     {
-        if(isDead)
+        if (isDead)
         {
             return;
         }
@@ -82,13 +87,34 @@ public abstract class EnemyBehaviour : MonoBehaviour
         {
             currentHP -= receivedDamage;
             SpawnDamageCanvas(receivedDamage);
+            StartCoroutine(ChangeMaterialOnDamage());
+
             if (currentHP <= 0)
             {
-                isDead=true;
+                isDead = true;
                 Death();
             }
         }
     }
+
+    private IEnumerator ChangeMaterialOnDamage()
+    {
+        SetMaterial(_onDamageMaterial);
+
+        yield return new WaitForSeconds(0.1f);
+
+        SetMaterial(_defaultMateral);
+    }
+
+    private void SetMaterial(Material material)
+    {
+        Renderer renderer = GetComponent<Renderer>();
+        if (renderer != null)
+        {
+            renderer.material = material;
+        }
+    }
+
     protected virtual void Death()
     {
         SpawnMeatPieces(UnityEngine.Random.Range(_minRangePieceCount, _maxRangePieceCount + 1), 2f);
