@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System;
 using UnityEngine.VFX;
+using Unity.VisualScripting.Antlr3.Runtime;
 [RequireComponent(typeof(Collider))]
 [RequireComponent(typeof(AudioSource))]
 [RequireComponent(typeof(Rigidbody))]
@@ -35,14 +36,21 @@ public abstract class EnemyBehaviour : MonoBehaviour
     #region other
     protected static Transform target;
     protected static float distanceToPlayer;
+
     private GameObject _meatPiece;
-    private int _minRange = 2;
-    private int _maxRange = 4;
+    private int _minRangePieceCount = 2;
+    private int _maxRangePieceCount = 4;
+
+    private GameObject _dmgCanv;
+    private float _dmgCanvLifetime = .75f;
+    private float _ydmgCanvasOffset = 4.8f;
+    private bool _isRightSide=false;
 
     #endregion
     protected virtual void Awake()
     {
         _meatPiece = Resources.Load<GameObject>("Prefabs/meatPiece");
+        _dmgCanv = Resources.Load<GameObject>("Prefabs/damageCanvas");
 
         source = GetComponent<AudioSource>();
         animator = GetComponent<Animator>();
@@ -69,6 +77,7 @@ public abstract class EnemyBehaviour : MonoBehaviour
         else
         {
             currentHP -= receivedDamage;
+            SpawnDamageCanvas(receivedDamage);
             if (currentHP <= 0)
             {
                 StartCoroutine(C_Death());
@@ -78,10 +87,9 @@ public abstract class EnemyBehaviour : MonoBehaviour
     protected virtual IEnumerator C_Death()
     {
         // Прежде чем уничтожить объект, раскидаем префабы мяса
-        SpawnMeatPieces(UnityEngine.Random.Range(_minRange, _maxRange + 1), 2f); // Спавним 5 кусочков мяса в радиусе 2 единицы
+        SpawnMeatPieces(UnityEngine.Random.Range(_minRangePieceCount, _maxRangePieceCount + 1), 2f); // Спавним 5 кусочков мяса в радиусе 2 единицы
 
         yield return null;
-        Debug.Log("ded");
         Destroy(gameObject); // Уничтожаем объект
     }
 
@@ -108,6 +116,21 @@ public abstract class EnemyBehaviour : MonoBehaviour
                 rb.AddForce(randomForce * 4f, ForceMode.Impulse); // Применяем силу для разлета
             }
         }
+    }
+    private void SpawnDamageCanvas(float damage)
+    {
+        GameObject canvas = GameObject.Instantiate(_dmgCanv);
+        Destroy(canvas, _dmgCanvLifetime);
+
+        DamageText dmgText = canvas.GetComponentInChildren<DamageText>();
+        dmgText.Duration = _dmgCanvLifetime;
+        dmgText.Text = damage.ToString();
+
+        _isRightSide=!_isRightSide;
+        dmgText.IsRightSide = _isRightSide;
+
+        canvas.transform.SetParent(transform);
+        canvas.transform.localPosition = new Vector3(0, _ydmgCanvasOffset, 0);
     }
 
 }
