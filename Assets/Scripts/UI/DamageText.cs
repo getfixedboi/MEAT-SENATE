@@ -40,8 +40,8 @@ public class DamageText : MonoBehaviour
 
         if (elapsedTime < .05)
         {
-            transform.localPosition += Vector3.up * .04f;
-            transform.localPosition += Vector3.right * (IsRightSide ? -1 : 1) * (.07f - UnityEngine.Random.Range(-.2f, .2f));
+            transform.localPosition += Vector3.up * (.04f - UnityEngine.Random.Range(-.02f, .02f));
+            transform.localPosition += Vector3.right * (IsRightSide ? -1 : 1) * (.07f - UnityEngine.Random.Range(-.3f, .3f));
         }
         else
         {

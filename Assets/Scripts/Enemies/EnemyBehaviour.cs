@@ -44,7 +44,7 @@ public abstract class EnemyBehaviour : MonoBehaviour
     private GameObject _dmgCanv;
     private float _dmgCanvLifetime = .75f;
     private float _ydmgCanvasOffset = 4.8f;
-    private bool _isRightSide=false;
+    private bool _isRightSide = false;
 
     #endregion
     protected virtual void Awake()
@@ -70,6 +70,10 @@ public abstract class EnemyBehaviour : MonoBehaviour
     }
     public virtual void TakeDamage(float receivedDamage)
     {
+        if(isDead)
+        {
+            return;
+        }
         if (receivedDamage <= 0)
         {
             throw new ArgumentException("damage cannot be null");
@@ -80,19 +84,15 @@ public abstract class EnemyBehaviour : MonoBehaviour
             SpawnDamageCanvas(receivedDamage);
             if (currentHP <= 0)
             {
-                StartCoroutine(C_Death());
+                isDead=true;
+                Death();
             }
         }
     }
-    protected virtual IEnumerator C_Death()
+    protected virtual void Death()
     {
-        // Прежде чем уничтожить объект, раскидаем префабы мяса
-        SpawnMeatPieces(UnityEngine.Random.Range(_minRangePieceCount, _maxRangePieceCount + 1), 2f); // Спавним 5 кусочков мяса в радиусе 2 единицы
-
-        yield return null;
-        Destroy(gameObject); // Уничтожаем объект
+        SpawnMeatPieces(UnityEngine.Random.Range(_minRangePieceCount, _maxRangePieceCount + 1), 2f);
     }
-
     private void SpawnMeatPieces(int piecesCount, float spawnRadius)
     {
         for (int i = 0; i < piecesCount; i++)
@@ -116,6 +116,7 @@ public abstract class EnemyBehaviour : MonoBehaviour
                 rb.AddForce(randomForce * 4f, ForceMode.Impulse); // Применяем силу для разлета
             }
         }
+        Destroy(gameObject);
     }
     private void SpawnDamageCanvas(float damage)
     {
@@ -126,11 +127,9 @@ public abstract class EnemyBehaviour : MonoBehaviour
         dmgText.Duration = _dmgCanvLifetime;
         dmgText.Text = damage.ToString();
 
-        _isRightSide=!_isRightSide;
+        _isRightSide = !_isRightSide;
         dmgText.IsRightSide = _isRightSide;
 
-        canvas.transform.SetParent(transform);
-        canvas.transform.localPosition = new Vector3(0, _ydmgCanvasOffset, 0);
+        canvas.transform.localPosition = new Vector3(transform.position.x, transform.position.y + _ydmgCanvasOffset, transform.position.z);
     }
-
 }
