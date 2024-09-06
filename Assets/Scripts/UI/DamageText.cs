@@ -38,10 +38,10 @@ public class DamageText : MonoBehaviour
             textComponent.color = new Color(currentColor.r, currentColor.g, currentColor.b, Mathf.Min(t * 2, 1));  // Увеличение альфа для плавного появления
         }
 
-        if (elapsedTime < .05)
+        if (elapsedTime < .15f)
         {
-            transform.localPosition += Vector3.up * (.04f - UnityEngine.Random.Range(-.02f, .02f));
-            transform.localPosition += Vector3.right * (IsRightSide ? -1 : 1) * (.07f - UnityEngine.Random.Range(-.3f, .3f));
+            transform.localPosition += Vector3.up * (.03f - UnityEngine.Random.Range(-.013f, .013f));
+            transform.localPosition += Vector3.right * (IsRightSide ? -1 : 1) * (.05f - UnityEngine.Random.Range(-.15f, .15f));
         }
         else
         {

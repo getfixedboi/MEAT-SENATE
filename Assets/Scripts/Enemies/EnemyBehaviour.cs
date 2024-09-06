@@ -43,7 +43,7 @@ public abstract class EnemyBehaviour : MonoBehaviour
 
     private GameObject _dmgCanv;
     private float _dmgCanvLifetime = .75f;
-    private float _ydmgCanvasOffset = 4.8f;
+    private float _ydmgCanvasOffset = 4.2f;
     private bool _isRightSide = false;
     private Material _onDamageMaterial;
     private Material _defaultMateral;
