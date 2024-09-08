@@ -7,6 +7,7 @@ public class MeatPiece : MonoBehaviour
 {
     private static GameObject _player;
     private Rigidbody _rb;
+    private bool _canBeStopped = false;
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
@@ -14,23 +15,28 @@ public class MeatPiece : MonoBehaviour
     }
     private void Start()
     {
-        StartCoroutine(C_EnablePhysCollider());
-        StartCoroutine(C_DisablePhysCollider());
+        StartCoroutine(C_DisableCollider());
     }
-    private IEnumerator C_EnablePhysCollider()
+    public void Update()
     {
-        yield return new WaitForSeconds(.15f);
-        GetComponent<BoxCollider>().enabled = true;
-    }
-    private IEnumerator C_DisablePhysCollider()
-    {
-        yield return new WaitForSeconds(.5f);
-        if (_rb.velocity == Vector3.zero)
+
+        if (_rb.velocity != Vector3.zero)
         {
+            transform.rotation = new Quaternion(0, 0, 0, 0);
+        }
+
+        if (_rb.velocity == Vector3.zero && _canBeStopped)
+        {
+            transform.Rotate(0, 0.1f, 0);
             _rb.isKinematic = true;
             _rb.useGravity = false;
             GetComponent<BoxCollider>().enabled = false;
         }
+    }
+    private IEnumerator C_DisableCollider()
+    {
+        yield return new WaitForSeconds(.5f);
+        _canBeStopped = true;
     }
     void OnTriggerEnter(Collider other)
     {
@@ -59,7 +65,7 @@ public class MeatPiece : MonoBehaviour
 
     private IEnumerator AnimateItemAbsorption(GameObject item)
     {
-        float speed = 20f; // Скорость перемещения предмета к игроку
+        float speed = 3f; // Скорость перемещения предмета к игроку
 
         // Целевая позиция для предмета (например, на уровне "живота", чуть ниже камеры)
         Vector3 targetPosition = _player.transform.position + _player.transform.forward * 0.5f - _player.transform.up * .4f;

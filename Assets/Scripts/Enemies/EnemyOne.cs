@@ -6,7 +6,7 @@ public class EnemyOne : EnemyBehaviour
 {
     protected override void Awake()
     {
-        maxHP = 10000;
+        maxHP = 50;
         base.Awake();
     }
     protected override void Update()
@@ -18,6 +18,7 @@ public class EnemyOne : EnemyBehaviour
         }
         else if (distanceToPlayer <= rangeList[0] && distanceToPlayer >= rangeList[1])
         {
+            agent.updateRotation = true;
             agent.SetDestination(target.position);
             if (timer >= 1.5f)
             {
@@ -30,8 +31,14 @@ public class EnemyOne : EnemyBehaviour
         }
         else if (distanceToPlayer <= rangeList[1])
         {
+            agent.updateRotation = false;
             agent.speed = 0;
             agent.SetDestination(gameObject.transform.position);
+
+            if (totalCooldownTimer >= 0 && totalCooldownTimer < 0.5)
+            {
+                SelfRotateTowardsTarget();
+            }
 
             if (totalCooldownTimer >= 0) { return; }
 
@@ -58,5 +65,13 @@ public class EnemyOne : EnemyBehaviour
         totalCooldownTimer = cooldownList[1];
         timer = 0;
         target.gameObject.GetComponent<PlayerStatictics>().TakeDamage(damageList[1]);
+    }
+    private void SelfRotateTowardsTarget()
+    {
+        agent.updateRotation = false;
+        Vector3 direction = (target.position - transform.position).normalized;
+        direction.y = 0;
+        Quaternion targetRotation = Quaternion.LookRotation(direction);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 10 * Time.deltaTime);
     }
 }

@@ -37,7 +37,11 @@ public class EnemyTwo : EnemyBehaviour
         else
         {
             SideToSideMovement();
-            SelfRotateTowardsTarget();
+
+            if (totalCooldownTimer >= 0 && totalCooldownTimer < 0.5)
+            {
+                SelfRotateTowardsTarget();
+            }
 
             if (totalCooldownTimer >= 0) { return; }
 

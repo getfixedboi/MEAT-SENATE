@@ -74,7 +74,7 @@ public class DamageText : MonoBehaviour
 
             _textRushTime = 0.15f;
 
-            _xRushMultliplier = 0.5f;
+            _xRushMultliplier = 0.2f;
             _yRushMultliplier = 0.4f;
             _yCalmMultliplier = 0.002f;
 
