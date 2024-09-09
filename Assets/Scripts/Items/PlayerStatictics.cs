@@ -77,6 +77,24 @@ public class PlayerStatictics : MonoBehaviour
             throw new ArgumentException($"Item {item.name} is already taken");
         }
     }
+    public void AddItem(ItemBehaviour item, bool param)
+    {
+        if (!_playerItems.Contains(item))
+        {
+            if (param)
+            {
+                item.gameObject.GetComponent<MeshRenderer>().enabled = false;
+            }
+            TakeFromGroundItem(item.gameObject, param);
+
+            _playerItems.Add(item);
+            ReloadUI();
+        }
+        else
+        {
+            throw new ArgumentException($"Item {item.name} is already taken");
+        }
+    }
     public void RemoveItem(ItemBehaviour item)
     {
         if (_playerItems.Contains(item))
@@ -145,7 +163,23 @@ public class PlayerStatictics : MonoBehaviour
         // Запускаем корутину для динамического перемещения предмета к игроку
         StartCoroutine(AnimateItemAbsorption(item));
     }
+    private void TakeFromGroundItem(GameObject item,bool param)
+    {
+        // Отключаем физику у предмета, если она есть, чтобы она не мешала движению
+        if (item.TryGetComponent<Rigidbody>(out Rigidbody rb))
+        {
+            rb.isKinematic = true;
+        }
 
+        // Отключаем коллайдер предмета
+        if (item.TryGetComponent<Collider>(out Collider col))
+        {
+            col.enabled = false;
+        }
+
+        // Запускаем корутину для динамического перемещения предмета к игроку
+        StartCoroutine(AnimateItemAbsorption(item,param));
+    }
     private IEnumerator AnimateItemAbsorption(GameObject item)
     {
         float speed = 20f; // Скорость перемещения предмета к игроку
@@ -168,6 +202,38 @@ public class PlayerStatictics : MonoBehaviour
 
         // Перемещаем item к позиции игрока (можно добавить смещение при необходимости)
         item.transform.localPosition = Vector3.zero;
+
+        // Отключаем item, чтобы он не был видимым или интерактивным в мире
+        item.SetActive(false);
+    }
+
+    private IEnumerator AnimateItemAbsorption(GameObject item,bool param)
+    {
+        float speed = 20f; // Скорость перемещения предмета к игроку
+
+        // Целевая позиция для предмета (например, на уровне "живота", чуть ниже камеры)
+        Vector3 targetPosition = transform.position + transform.forward * 0.5f - transform.up * .4f;
+
+        while (Vector3.Distance(item.transform.position, targetPosition) > 0.1f)
+        {
+            // Динамическое движение предмета к цели с заданной скоростью
+            item.transform.position = Vector3.MoveTowards(item.transform.position, targetPosition, speed * Time.deltaTime);
+            yield return null; // Ожидаем до следующего кадра
+        }
+
+        // Убедимся, что предмет точно находится в целевой позиции
+        item.transform.position = targetPosition;
+
+        // Делает item дочерним объектом игрока
+        item.transform.SetParent(transform);
+
+        // Перемещаем item к позиции игрока (можно добавить смещение при необходимости)
+        item.transform.localPosition = Vector3.zero;
+
+        if(param)
+        {
+            item.gameObject.GetComponent<MeshRenderer>().enabled = true;
+        }
 
         // Отключаем item, чтобы он не был видимым или интерактивным в мире
         item.SetActive(false);

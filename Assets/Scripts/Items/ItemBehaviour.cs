@@ -54,7 +54,7 @@ public abstract class ItemBehaviour : Interactable
     {
         StopCoroutine(C_DisableCollider());
     }
-    protected void OnGet()
+    public void OnGet()
     {
         playerStats.AddItem(this);
         GetEffect();
@@ -63,6 +63,11 @@ public abstract class ItemBehaviour : Interactable
     {
         playerStats.AddItem(item);
         item.GetEffect();
+    }
+    public void OnGet(bool param)
+    {
+        playerStats.AddItem(this,param);
+        GetEffect();
     }
     public void OnDrop()
     {
@@ -93,14 +98,20 @@ public abstract class ItemBehaviour : Interactable
             OnDrop();
         }
     }
+    public abstract void SetDesc();
     public abstract void GetEffect();
     public abstract void LoseEffect();
     public string GetDesc()
     {
+        SetDesc();
         return $"{itemName}" + $"\n{itemDescription}";
     }
     public Sprite GetSprite()
     {
+        if (itemSprite == null)
+        {
+            itemSprite = Resources.Load<Sprite>($"Sprites/{GetType().Name}");
+        }
         return itemSprite;
     }
 }

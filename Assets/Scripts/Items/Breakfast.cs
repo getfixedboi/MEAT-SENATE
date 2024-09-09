@@ -1,6 +1,8 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class BisonSteak : ItemBehaviour
+public class Breakfast : ItemBehaviour
 {
     protected override void Awake()
     {
@@ -9,21 +11,20 @@ public class BisonSteak : ItemBehaviour
     }
     public override void GetEffect()
     {
-        playerStats.MaxHP += 20;
+        playerStats.MaxHP += 5;
     }
 
     public override void LoseEffect()
     {
-        playerStats.MaxHP -= 20;
+        playerStats.MaxHP -= 5;
         if (playerStats.СurrentHP > playerStats.MaxHP)
         {
             playerStats.СurrentHP = playerStats.MaxHP;
         }
     }
-
     public override void SetDesc()
     {
-        itemName = "Bison stake";
+        itemName = "Breakfast";
         itemDescription = "HP up";
     }
 }

@@ -15,9 +15,9 @@ public class PlayerSkills : MonoBehaviour
     [SerializeField] private float _meatAbilityCooldown;
     private float _meatAbilityTimer = 0;
     [SerializeField] private int _meatPieceReqiureCount;
-    public int MeatPieceCount = 0;
+    public static int MeatPieceCount = 40;
     [SerializeField] private float _hpRegen;
-    [Header("shotgun shoot")]
+    [Header("Shotgun shoot")]
     [SerializeField] private GameObject _playerProjectile;
     [SerializeField] private int _numberOfProjectiles = 5; // Количество снарядов
     [SerializeField] private float _spreadAngle = 15f; // Угол разброса

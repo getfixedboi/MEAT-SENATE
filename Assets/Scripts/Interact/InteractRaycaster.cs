@@ -24,7 +24,7 @@ public class InteractRaycaster : MonoBehaviour
         {
             EnabledTabMode();
         }
-        else
+        else if (Input.GetKeyUp(KeyCode.Tab))
         {
             DisabledTabMode();
         }

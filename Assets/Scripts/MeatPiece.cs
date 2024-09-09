@@ -82,7 +82,7 @@ public class MeatPiece : MonoBehaviour
         // Перемещаем item к позиции игрока (можно добавить смещение при необходимости)
         item.transform.localPosition = Vector3.zero;
 
-        _player.GetComponent<PlayerSkills>().MeatPieceCount++;
+        PlayerSkills.MeatPieceCount++;
         Destroy(gameObject);
     }
 }

@@ -5,8 +5,7 @@ public class Shield : ItemBehaviour
     protected override void Awake()
     {
         base.Awake();
-        itemName = "Shield";
-        itemDescription = "Shield up";
+        SetDesc();
     }
     public override void GetEffect()
     {
@@ -17,5 +16,9 @@ public class Shield : ItemBehaviour
     {
         playerStats.JumpForce -= 10;
     }
+    public override void SetDesc()
+    {
+        itemName = "Shield";
+        itemDescription = "Shield up";
+    }
 }
-// xuita
