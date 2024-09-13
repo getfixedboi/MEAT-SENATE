@@ -22,6 +22,7 @@ public class PlayerSkills : MonoBehaviour
     [SerializeField] private int _numberOfProjectiles = 5; // Количество снарядов
     [SerializeField] private float _spreadAngle = 15f; // Угол разброса
     [SerializeField] private float _projectileForce = 10f; // Сила выстрела
+    public static float ProjectileExtraForce = 0f; // Сила выстрела
     [SerializeField] private float _skillUsageCooldown = 1f; // Время, которое нужно подождать перед повторным использованием навыка
     private float _nextSkillUseTime = 0f; // Время, когда навык будет доступен для следующего использования
     private float _damage = 12;
@@ -97,7 +98,7 @@ public class PlayerSkills : MonoBehaviour
             Rigidbody rb = projectile.GetComponent<Rigidbody>();
             if (rb != null)
             {
-                rb.AddForce(direction * _projectileForce, ForceMode.Impulse);
+                rb.AddForce(direction * (_projectileForce + ProjectileExtraForce), ForceMode.Impulse);
             }
         }
     }

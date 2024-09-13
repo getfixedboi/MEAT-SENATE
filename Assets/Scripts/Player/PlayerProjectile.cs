@@ -7,6 +7,10 @@ public class PlayerProjectile : MonoBehaviour
     [HideInInspector] public float Damage;
     private void Start()
     {
+        if (PlayerStatictics.CurrentModifier)
+        {
+            PlayerStatictics.CurrentModifier.ModRef.AttachProjectileEffect(gameObject);
+        }
         Destroy(gameObject, 3f);
     }
     private void OnTriggerEnter(Collider other)

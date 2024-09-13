@@ -8,7 +8,7 @@ using UnityEngine;
 public class PlayerStatictics : MonoBehaviour
 {
     #region movment
-    [Header("Movment")]
+    [Header("Movement")]
     public float BaseMovSpeed;
     public float JumpForce;
     #endregion
@@ -19,17 +19,23 @@ public class PlayerStatictics : MonoBehaviour
     private bool _invincibility = false;
     [SerializeField][Range(0.1f, 40f)] private float _invincibilityPeriod;
     private static HashSet<ItemBehaviour> _playerItems;
+    private static HashSet<ModifierBehaviour> _playerModifiers;
     #endregion
     [Header("UI")]
     [SerializeField] private Canvas _playerCanvas;
     [SerializeField] private GameObject _itemImagePrefab;
+    [SerializeField] private GameObject _modifierImagePrefab;
     [SerializeField] private UnityEngine.UI.Text _healthText;
-    private static List<GameObject> _uiPrefabs = new List<GameObject>();
-    public Vector3 Offset;
+    private static List<GameObject> _itemUiPrefabs = new List<GameObject>();
+    private static List<GameObject> _modifierUiPrefabs = new List<GameObject>();
+    public static ShowModifierDescOnUI CurrentModifier;
+    public Vector3 ItemOffset;
+    public Vector3 ModifierOffset;
 
     private void Awake()
     {
         _playerItems = new HashSet<ItemBehaviour>();
+        _playerModifiers = new HashSet<ModifierBehaviour>();
         СurrentHP = MaxHP;
 
         _healthText.text = MaxHP.ToString() + "/" + СurrentHP.ToString();
@@ -62,7 +68,7 @@ public class PlayerStatictics : MonoBehaviour
         yield return new WaitForSeconds(_invincibilityPeriod);
         _invincibility = false;
     }
-
+#region items management
     public void AddItem(ItemBehaviour item)
     {
         if (!_playerItems.Contains(item))
@@ -70,7 +76,7 @@ public class PlayerStatictics : MonoBehaviour
             TakeFromGroundItem(item.gameObject);
 
             _playerItems.Add(item);
-            ReloadUI();
+            ReloadItemUI();
         }
         else
         {
@@ -88,7 +94,7 @@ public class PlayerStatictics : MonoBehaviour
             TakeFromGroundItem(item.gameObject, param);
 
             _playerItems.Add(item);
-            ReloadUI();
+            ReloadItemUI();
         }
         else
         {
@@ -100,7 +106,7 @@ public class PlayerStatictics : MonoBehaviour
         if (_playerItems.Contains(item))
         {
             _playerItems.Remove(item);
-            ReloadUI();
+            ReloadItemUI();
 
             ThrowAwayItem(item.gameObject);
         }
@@ -109,14 +115,14 @@ public class PlayerStatictics : MonoBehaviour
             throw new ArgumentException($"Item {item.name} does not exists");
         }
     }
-    private void ReloadUI()
+    private void ReloadItemUI()
     {
         // Удаляем старые UI элементы
-        for (int i = 0; i < _uiPrefabs.Count; i++)
+        for (int i = 0; i < _itemUiPrefabs.Count; i++)
         {
-            Destroy(_uiPrefabs[i]);
+            Destroy(_itemUiPrefabs[i]);
         }
-        _uiPrefabs.Clear();
+        _itemUiPrefabs.Clear();
 
         int horizontalDelay = 0;
         foreach (ItemBehaviour item in _playerItems)
@@ -125,7 +131,7 @@ public class PlayerStatictics : MonoBehaviour
             horizontalDelay++;
 
             // Создаем новый экземпляр префаба
-            GameObject gameObj = Instantiate(_itemImagePrefab, _playerCanvas.transform.position + Offset + extraOffset, Quaternion.identity);
+            GameObject gameObj = Instantiate(_itemImagePrefab, _playerCanvas.transform.position + ItemOffset + extraOffset, Quaternion.identity);
 
             // Добавляем компонент только к экземпляру
             ItemBehaviour itemRef = item.GetComponent<ItemBehaviour>();
@@ -142,10 +148,94 @@ public class PlayerStatictics : MonoBehaviour
             gameObj.transform.SetParent(_playerCanvas.transform, false);
 
             // Добавляем созданный экземпляр в список для дальнейшего использования
-            _uiPrefabs.Add(gameObj);
+            _itemUiPrefabs.Add(gameObj);
         }
     }
+#endregion
+#region modifiers management
+public void AddModifier(ModifierBehaviour item)
+    {
+        if (!_playerModifiers.Contains(item))
+        {
+            TakeFromGroundItem(item.gameObject);
 
+            _playerModifiers.Add(item);
+            ReloadModifierUI();
+        }
+        else
+        {
+            throw new ArgumentException($"Modifier {item.name} is already taken");
+        }
+    }
+    public void AddModifier(ModifierBehaviour item, bool param)
+    {
+        if (!_playerModifiers.Contains(item))
+        {
+            if (param)
+            {
+                item.gameObject.GetComponent<MeshRenderer>().enabled = false;
+            }
+            TakeFromGroundItem(item.gameObject, param);
+
+            _playerModifiers.Add(item);
+            ReloadModifierUI();
+        }
+        else
+        {
+            throw new ArgumentException($"Modifier {item.name} is already taken");
+        }
+    }
+    public void RemoveModifier(ModifierBehaviour item)
+    {
+        if (_playerModifiers.Contains(item))
+        {
+            _playerModifiers.Remove(item);
+            ReloadModifierUI();
+
+            ThrowAwayItem(item.gameObject);
+        }
+        else
+        {
+            throw new ArgumentException($"Item {item.name} does not exists");
+        }
+    }
+    private void ReloadModifierUI()
+    {
+        // Удаляем старые UI элементы
+        for (int i = 0; i < _modifierUiPrefabs.Count; i++)
+        {
+            Destroy(_modifierUiPrefabs[i]);
+        }
+        _modifierUiPrefabs.Clear();
+
+        int horizontalDelay = 0;
+        foreach (ModifierBehaviour mod in _playerModifiers)
+        {
+            Vector3 extraOffset = new Vector3(horizontalDelay * 150, 0, 0);
+            horizontalDelay--;
+
+            // Создаем новый экземпляр префаба
+            GameObject gameObj = Instantiate(_modifierImagePrefab, _playerCanvas.transform.position + ModifierOffset + extraOffset, Quaternion.identity);
+
+            // Добавляем компонент только к экземпляру
+            ModifierBehaviour modRef = mod.GetComponent<ModifierBehaviour>();
+            gameObj.GetComponent<ShowModifierDescOnUI>().ModRef = modRef;
+
+            // Настраиваем компонент ShowModDescOnUI
+            var showModDesc = gameObj.GetComponent<ShowModifierDescOnUI>();
+            if (showModDesc != null)
+            {
+                showModDesc.Canvas = _playerCanvas;
+            }
+
+            // Устанавливаем родителя для позиционирования UI элемента
+            gameObj.transform.SetParent(_playerCanvas.transform, false);
+
+            // Добавляем созданный экземпляр в список для дальнейшего использования
+            _modifierUiPrefabs.Add(gameObj);
+        }
+    }
+#endregion
     private void TakeFromGroundItem(GameObject item)
     {
         // Отключаем физику у предмета, если она есть, чтобы она не мешала движению
@@ -163,7 +253,7 @@ public class PlayerStatictics : MonoBehaviour
         // Запускаем корутину для динамического перемещения предмета к игроку
         StartCoroutine(AnimateItemAbsorption(item));
     }
-    private void TakeFromGroundItem(GameObject item,bool param)
+    private void TakeFromGroundItem(GameObject item, bool param)
     {
         // Отключаем физику у предмета, если она есть, чтобы она не мешала движению
         if (item.TryGetComponent<Rigidbody>(out Rigidbody rb))
@@ -178,7 +268,7 @@ public class PlayerStatictics : MonoBehaviour
         }
 
         // Запускаем корутину для динамического перемещения предмета к игроку
-        StartCoroutine(AnimateItemAbsorption(item,param));
+        StartCoroutine(AnimateItemAbsorption(item, param));
     }
     private IEnumerator AnimateItemAbsorption(GameObject item)
     {
@@ -206,8 +296,7 @@ public class PlayerStatictics : MonoBehaviour
         // Отключаем item, чтобы он не был видимым или интерактивным в мире
         item.SetActive(false);
     }
-
-    private IEnumerator AnimateItemAbsorption(GameObject item,bool param)
+    private IEnumerator AnimateItemAbsorption(GameObject item, bool param)
     {
         float speed = 20f; // Скорость перемещения предмета к игроку
 
@@ -230,7 +319,7 @@ public class PlayerStatictics : MonoBehaviour
         // Перемещаем item к позиции игрока (можно добавить смещение при необходимости)
         item.transform.localPosition = Vector3.zero;
 
-        if(param)
+        if (param)
         {
             item.gameObject.GetComponent<MeshRenderer>().enabled = true;
         }
@@ -238,7 +327,6 @@ public class PlayerStatictics : MonoBehaviour
         // Отключаем item, чтобы он не был видимым или интерактивным в мире
         item.SetActive(false);
     }
-
     private void ThrowAwayItem(GameObject item)
     {
         // Включаем item, чтобы он снова был видимым и интерактивным
@@ -261,7 +349,6 @@ public class PlayerStatictics : MonoBehaviour
         // Запускаем корутину для включения коллайдера с задержкой
         StartCoroutine(EnableColliderAfterDelay(item, 0.1f)); // Задержка в 0.1 секунды
     }
-
     private IEnumerator EnableColliderAfterDelay(GameObject item, float delay)
     {
         yield return new WaitForSeconds(delay);
@@ -272,5 +359,4 @@ public class PlayerStatictics : MonoBehaviour
             col.enabled = true;
         }
     }
-
 }

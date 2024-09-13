@@ -6,7 +6,7 @@ public class EnemyOne : EnemyBehaviour
 {
     protected override void Awake()
     {
-        maxHP = 50;
+        maxHP = 2000;
         base.Awake();
     }
     protected override void Update()

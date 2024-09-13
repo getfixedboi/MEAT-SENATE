@@ -3,23 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-
-public abstract class ItemBehaviour : Interactable
+public abstract class ModifierBehaviour : Interactable
 {
     protected static PlayerStatictics playerStats;
     /// <summary>
-    /// Название спрайта должно быть точно таким же как и название класса(предмета) для которого спрайт нужен
+    /// Название спрайта должно быть точно таким же как и название класса(модификатора) для которого спрайт нужен
     /// </summary>
-    protected Sprite itemSprite;
-    protected string itemName;
-    protected string itemDescription;
+    protected Sprite modifierSprite;
+    protected string modifierName;
+    protected string modifierDescription;
     protected Rigidbody rb;
     protected bool canBeStopped = false;
     protected override void Awake()
     {
         base.Awake();
         rb = GetComponent<Rigidbody>();
-        itemSprite = Resources.Load<Sprite>($"Sprites/{GetType().Name}");
+        modifierSprite = Resources.Load<Sprite>($"Sprites/{GetType().Name}");
         playerStats = GameObject.FindWithTag("Player").GetComponent<PlayerStatictics>();
     }
     protected void Start()
@@ -59,28 +58,23 @@ public abstract class ItemBehaviour : Interactable
     }
     public void OnGet()
     {
-        playerStats.AddItem(this);
-        GetEffect();
+        playerStats.AddModifier(this);
     }
-    public void OnGet(ItemBehaviour item)
+    public void OnGet(ModifierBehaviour item)
     {
-        playerStats.AddItem(item);
-        item.GetEffect();
+        playerStats.AddModifier(item);
     }
     public void OnGet(bool param)
     {
-        playerStats.AddItem(this,param);
-        GetEffect();
+        playerStats.AddModifier(this,param);
     }
     public void OnDrop()
     {
-        playerStats.RemoveItem(this);
-        LoseEffect();
+        playerStats.RemoveModifier(this);
     }
-    public void OnDrop(ItemBehaviour item)
+    public void OnDrop(ModifierBehaviour item)
     {
-        playerStats.RemoveItem(item);
-        item.LoseEffect();
+        playerStats.RemoveModifier(item);
     }
     public override sealed void OnFocus()
     {
@@ -102,19 +96,19 @@ public abstract class ItemBehaviour : Interactable
         }
     }
     public abstract void SetDesc();
-    public abstract void GetEffect();
-    public abstract void LoseEffect();
+    public abstract void AttachProjectileEffect(GameObject projectile);
+    public abstract void DetachProjectileEffect();
     public string GetDesc()
     {
         SetDesc();
-        return $"{itemName}" + $"\n{itemDescription}";
+        return $"{modifierName}" + $"\n{modifierDescription}";
     }
     public Sprite GetSprite()
     {
-        if (itemSprite == null)
+        if (modifierSprite == null)
         {
-            itemSprite = Resources.Load<Sprite>($"Sprites/{GetType().Name}");
+            modifierSprite = Resources.Load<Sprite>($"Sprites/{GetType().Name}");
         }
-        return itemSprite;
+        return modifierSprite;
     }
 }
