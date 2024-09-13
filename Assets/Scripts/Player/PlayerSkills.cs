@@ -38,6 +38,7 @@ public class PlayerSkills : MonoBehaviour
     }
     private void Update()
     {
+        Debug.Log(ProjectileExtraForce);
         _meatPieceCountOutput.text = MeatPieceCount.ToString() + "/" + _meatPieceReqiureCount.ToString();
         _nextSkillUseTime -= Time.deltaTime;
 

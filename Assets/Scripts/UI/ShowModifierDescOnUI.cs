@@ -51,7 +51,11 @@ public class ShowModifierDescOnUI : MonoBehaviour, IPointerEnterHandler, IPointe
             ModifierBehaviour modBehaviour = ModRef;
             if (modBehaviour != null)
             {
-                // Вызываем OnDrop() для текущего объекта
+                if (modBehaviour == PlayerStatictics.CurrentModifier.ModRef)
+                {
+                    modBehaviour.DetachProjectileEffect();
+                    PlayerStatictics.CurrentModifier = null;
+                }
                 modBehaviour.OnDrop();
             }
         }
