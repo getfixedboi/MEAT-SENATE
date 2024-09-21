@@ -12,12 +12,12 @@ public class SecondModifier : ModifierBehaviour
 
     public override void AttachProjectileEffect(GameObject projectile)
     {
-        PlayerSkills.ProjectileExtraForce = 10f;
+        PlayerSkills.ProjectileExtraForce += 10f;
         projectile.GetComponent<Renderer>().material.color = Color.blue;
     }
 
     public override void DetachProjectileEffect()
     {
-        PlayerSkills.ProjectileExtraForce = 0f;
+        PlayerSkills.ProjectileExtraForce -= 10f;
     }
 }

@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Microsoft.Unity.VisualStudio.Editor;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -42,7 +41,7 @@ public class PlayerStatictics : MonoBehaviour
     }
     private void Update()
     {
-        _healthText.text = MaxHP.ToString() + "/" + СurrentHP.ToString();
+        _healthText.text = СurrentHP.ToString() + "/" + MaxHP.ToString();
     }
 
     public void Heal(float healAmount)
@@ -59,6 +58,8 @@ public class PlayerStatictics : MonoBehaviour
         if (_invincibility) { return; }
 
         СurrentHP -= inflictedDamage;
+        
+        PlayerProgress.ReceivedDamage += inflictedDamage;//
 
         StartCoroutine(C_TemporaryInvinsibility());
     }
@@ -68,7 +69,7 @@ public class PlayerStatictics : MonoBehaviour
         yield return new WaitForSeconds(_invincibilityPeriod);
         _invincibility = false;
     }
-#region items management
+    #region items management
     public void AddItem(ItemBehaviour item)
     {
         if (!_playerItems.Contains(item))
@@ -151,9 +152,9 @@ public class PlayerStatictics : MonoBehaviour
             _itemUiPrefabs.Add(gameObj);
         }
     }
-#endregion
-#region modifiers management
-public void AddModifier(ModifierBehaviour item)
+    #endregion
+    #region modifiers management
+    public void AddModifier(ModifierBehaviour item)
     {
         if (!_playerModifiers.Contains(item))
         {
@@ -235,7 +236,7 @@ public void AddModifier(ModifierBehaviour item)
             _modifierUiPrefabs.Add(gameObj);
         }
     }
-#endregion
+    #endregion
     private void TakeFromGroundItem(GameObject item)
     {
         // Отключаем физику у предмета, если она есть, чтобы она не мешала движению

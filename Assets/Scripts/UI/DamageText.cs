@@ -69,7 +69,6 @@ public class DamageText : MonoBehaviour
     {
         if (_distanceToPlayer < 2f)//1
         {
-            Debug.Log(1);
             _textComponent.fontSize = 3;
 
             _textRushTime = 0.15f;
@@ -83,7 +82,6 @@ public class DamageText : MonoBehaviour
         }
         else if (_distanceToPlayer >= 2f && _distanceToPlayer <= 4f)//2
         {
-            Debug.Log(2);
             _textComponent.fontSize = 4;
 
             _textRushTime = 0.15f;
@@ -97,7 +95,6 @@ public class DamageText : MonoBehaviour
         }
         else if (_distanceToPlayer > 4f && _distanceToPlayer <= 5f)//3
         {
-            Debug.Log(3);
             _textComponent.fontSize = 6;
 
             _textRushTime = 0.15f;
@@ -111,7 +108,6 @@ public class DamageText : MonoBehaviour
         }
         else/////////////////////////////////////////////////////////////4
         {
-            Debug.Log(4);
             _textComponent.fontSize = 9;
 
             _textRushTime = 0.15f;

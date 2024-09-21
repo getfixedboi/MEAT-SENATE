@@ -16,7 +16,10 @@ public class InteractRaycaster : MonoBehaviour
     private void Awake()
     {
         _mainCamera = this.gameObject;
-        _tabBG.enabled = false;
+    }
+    private void Start()
+    {
+        _tabBG.gameObject.SetActive(false);
     }
     private void Update()
     {
@@ -69,7 +72,7 @@ public class InteractRaycaster : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = true;
-        _tabBG.enabled = true;
+        _tabBG.gameObject.SetActive(true);
 
         Color tempColor = _defaultBG.color;
         _defaultBG.color = new Color(tempColor.r,tempColor.g,tempColor.b,0.314f);
@@ -78,7 +81,7 @@ public class InteractRaycaster : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        _tabBG.enabled = false;
+        _tabBG.gameObject.SetActive(false);
 
         Color tempColor = _defaultBG.color;
         _defaultBG.color = new Color(tempColor.r,tempColor.g,tempColor.b,0.133f);
