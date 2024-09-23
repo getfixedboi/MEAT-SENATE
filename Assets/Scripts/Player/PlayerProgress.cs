@@ -79,7 +79,7 @@ public class PlayerProgress : MonoBehaviour
 
         _lowTierBuffs.Add(new Tuple<string, Action>("+5 мясных кусочков", () => PlayerSkills.MeatPieceCount += 5));
 
-        _midTierBuffs.Add(new Tuple<string, Action>("Увеличена скорость снаряда", () => PlayerSkills.ProjectileExtraForce += 3f));
+        _midTierBuffs.Add(new Tuple<string, Action>("Увеличена скорость снаряда", () => UnityEngine.Debug.Log("aboba")));
 
         _highTierBuffs.Add(new Tuple<string, Action>("Полное лечение", () => _playerStats.Heal(1000)));
     }

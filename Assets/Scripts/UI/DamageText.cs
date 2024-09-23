@@ -24,7 +24,7 @@ public class DamageText : MonoBehaviour
     private float _yRushRngMultliplier;
     private float _xRushRngMultliplier;
 
-    void Start()
+    void Awake()
     {
         _player = GameObject.FindWithTag("Player");
         _distanceToPlayer = Vector3.Distance(_player.transform.position, transform.position);
