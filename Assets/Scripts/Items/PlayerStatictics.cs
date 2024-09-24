@@ -219,7 +219,7 @@ public class PlayerStatictics : MonoBehaviour
             GameObject gameObj = Instantiate(_modifierImagePrefab, _playerCanvas.transform.position + ModifierOffset + extraOffset, Quaternion.identity);
 
             // Добавляем компонент только к экземпляру
-            ModifierBehaviour modRef = mod.GetComponent<ModifierBehaviour>();
+            ModifierBehaviour modRef = mod.GetComponentInChildren<ModifierBehaviour>();
             gameObj.GetComponent<ShowModifierDescOnUI>().ModRef = modRef;
 
             // Настраиваем компонент ShowModDescOnUI
@@ -234,6 +234,21 @@ public class PlayerStatictics : MonoBehaviour
 
             // Добавляем созданный экземпляр в список для дальнейшего использования
             _modifierUiPrefabs.Add(gameObj);
+
+            if(modRef==null)
+            {
+                UnityEngine.Debug.Log("Не удалось скопировать ссылку на компонент");
+
+                modRef = mod.GetComponentInChildren<ModifierBehaviour>();
+                if(modRef==null)
+                {
+                    UnityEngine.Debug.Log("Не удается снять ссылку с предмета");
+                }
+            }
+            else if(gameObj.GetComponent<ShowModifierDescOnUI>().ModRef==null)
+            {
+                UnityEngine.Debug.Log("Ссылка по прежнему не была установлена");
+            }
         }
     }
     #endregion
