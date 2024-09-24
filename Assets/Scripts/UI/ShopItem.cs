@@ -20,7 +20,9 @@ public class ShopItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         if (eventData.button == PointerEventData.InputButton.Left && PlayerSkills.MeatPieceCount >= _itemCost)
         {
             PlayerSkills.MeatPieceCount -= _itemCost;
+            Debug.Log("sozdan");
             GameObject obj = GameObject.Instantiate(ItemRef.gameObject, GameObject.FindWithTag("Player").transform.forward, new Quaternion());
+            obj.GetComponent<ItemBehaviour>().isShop = true;
             obj.GetComponent<ItemBehaviour>().OnGet(true);
             Destroy(this.gameObject);
         }

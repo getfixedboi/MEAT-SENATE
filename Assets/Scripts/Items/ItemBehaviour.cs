@@ -11,6 +11,8 @@ public abstract class ItemBehaviour : Interactable
     /// Название спрайта должно быть точно таким же как и название класса(предмета) для которого спрайт нужен
     /// </summary>
     protected Sprite itemSprite;
+
+    [HideInInspector] public bool isShop = false;
     protected string itemName;
     protected string itemDescription;
     protected Rigidbody rb;

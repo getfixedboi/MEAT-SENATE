@@ -92,7 +92,22 @@ public class PlayerStatictics : MonoBehaviour
             {
                 item.gameObject.GetComponent<MeshRenderer>().enabled = false;
             }
-            TakeFromGroundItem(item.gameObject, param);
+            if (!item.isShop)
+            {
+                TakeFromGroundItem(item.gameObject, param);
+            }
+            else
+            {
+                // Делает item дочерним объектом игрока
+                item.transform.SetParent(transform);
+
+                // Перемещаем item к позиции игрока (можно добавить смещение при необходимости)
+                item.transform.localPosition = Vector3.zero;
+
+                // Отключаем item, чтобы он не был видимым или интерактивным в мире
+                item.gameObject.SetActive(false);
+            }
+
 
             _playerItems.Add(item);
             ReloadItemUI();
