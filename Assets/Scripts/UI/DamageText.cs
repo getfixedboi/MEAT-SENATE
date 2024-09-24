@@ -29,14 +29,30 @@ public class DamageText : MonoBehaviour
         _player = GameObject.FindWithTag("Player");
         _distanceToPlayer = Vector3.Distance(_player.transform.position, transform.position);
 
-        _textComponent = GetComponent<Text>();
-        _textComponent.text = Text;
+       
+
+        //_textComponent = GetComponent<Text>();
+
+        //_textComponent.text = Text;
+    
+
 
         // Скрываем текст в первый кадр (начальный альфа-канал = 0)
+        //_startColor = new Color(_startColor.r, _startColor.g, _startColor.b, 0);
+        //_textComponent.color = _startColor;
+
+
+        //SpreadParams();
+    }
+
+
+    private void Start()
+    {
+        _textComponent = GetComponent<Text>();
+        _textComponent.text = Text;
         _startColor = new Color(_startColor.r, _startColor.g, _startColor.b, 0);
         _textComponent.color = _startColor;
-
-        SpreadParams();
+        SpreadParams(); 
     }
 
     void Update()
@@ -46,7 +62,7 @@ public class DamageText : MonoBehaviour
 
         // Рассчитываем процент завершения (от 0 до 1) для ускоренного перехода цвета
         float t = Mathf.Clamp01(_elapsedTime / Duration * 1.5f);
-
+    
         // Плавно делаем текст видимым и меняем его цвет (включая альфа-канал для плавного появления)
         if (_textComponent != null)
         {

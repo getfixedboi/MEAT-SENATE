@@ -251,7 +251,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &59775946
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -710,7 +710,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &114138426
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1510,7 +1510,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &395345915
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2866,10 +2866,10 @@ MonoBehaviour:
   _meatPieceReqiureCount: 3
   _hpRegen: 5
   _playerProjectile: {fileID: 8765141548994595136, guid: 64f89803f6c6e0347a8f0360c83ef164, type: 3}
-  _numberOfProjectiles: 5
-  _spreadAngle: 15
+  _numberOfProjectiles: 1
+  _spreadAngle: 0
   _projectileForce: 10
-  _skillUsageCooldown: 0.3
+  _skillUsageCooldown: 0.1
 --- !u!114 &775404157
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4629,7 +4629,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1570465356
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5388,7 +5388,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1695520294
 MonoBehaviour:
   m_ObjectHideFlags: 0

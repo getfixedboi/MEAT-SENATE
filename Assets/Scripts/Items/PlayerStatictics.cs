@@ -98,17 +98,32 @@ public class PlayerStatictics : MonoBehaviour
             }
             else
             {
+                item.isShop = false;
                 // Делает item дочерним объектом игрока
                 item.transform.SetParent(transform);
 
                 // Перемещаем item к позиции игрока (можно добавить смещение при необходимости)
                 item.transform.localPosition = Vector3.zero;
 
+                if (param)
+                {
+                    item.gameObject.GetComponent<MeshRenderer>().enabled = true;
+                }
+
+                if (item.TryGetComponent<Rigidbody>(out Rigidbody rb))
+                {
+                    rb.isKinematic = true;
+                }
+
+                // Отключаем коллайдер предмета
+                if (item.TryGetComponent<Collider>(out Collider col))
+                {
+                    col.enabled = false;
+                }
+
                 // Отключаем item, чтобы он не был видимым или интерактивным в мире
                 item.gameObject.SetActive(false);
             }
-
-
             _playerItems.Add(item);
             ReloadItemUI();
         }

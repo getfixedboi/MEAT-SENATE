@@ -85,6 +85,8 @@ public abstract class EnemyBehaviour : MonoBehaviour
         }
         else
         {
+            Debug.Log(receivedDamage);
+            Debug.Log(_dmgCanv + " SDPSFK0FH9 EFHUEWF EWBIJ GFEW");
             currentHP -= receivedDamage;
             SpawnDamageCanvas(receivedDamage);
             StartCoroutine(ChangeMaterialOnDamage());
@@ -155,6 +157,7 @@ public abstract class EnemyBehaviour : MonoBehaviour
         DamageText dmgText = canvas.GetComponentInChildren<DamageText>();
         dmgText.Duration = _dmgCanvLifetime;
         dmgText.Text = damage.ToString();
+        Debug.Log("debag d enemy" + dmgText.Text);
 
         _isRightSide = !_isRightSide;
         dmgText.IsRightSide = _isRightSide;
