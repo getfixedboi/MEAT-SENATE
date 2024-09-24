@@ -45,35 +45,33 @@ public class ShowModifierDescOnUI : MonoBehaviour, IPointerEnterHandler, IPointe
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        // Проверяем, была ли нажата правая кнопка мыши
-        if (eventData.button == PointerEventData.InputButton.Right)
-        {
-            ModifierBehaviour modBehaviour = ModRef;
-            if (modBehaviour != null)
-            {
-                if (modBehaviour == PlayerStatictics.CurrentModifier.ModRef)
-                {
-                    modBehaviour.DetachProjectileEffect();
-                    PlayerStatictics.CurrentModifier = null;
-                }
-                modBehaviour.OnDrop();
-            }
-        }
-
         if (eventData.button == PointerEventData.InputButton.Middle)
         {
-            if (PlayerStatictics.CurrentModifier)
+            if (PlayerStatictics.CurrentModifier != null)
             {
                 if (PlayerStatictics.CurrentModifier != this)
                 {
-                    PlayerStatictics.CurrentModifier.GetComponentInChildren<UnityEngine.UI.Text>().enabled = false;
+                    var previousText = PlayerStatictics.CurrentModifier.GetComponentInChildren<Text>();
+                    if (previousText != null)
+                    {
+                        previousText.enabled = false;
+                    }
                     PlayerStatictics.CurrentModifier.ModRef.DetachProjectileEffect();
                     PlayerStatictics.CurrentModifier = this;
-                    PlayerStatictics.CurrentModifier.GetComponentInChildren<UnityEngine.UI.Text>().enabled = true;
+                    var currentText = PlayerStatictics.CurrentModifier.GetComponentInChildren<Text>();
+                    if (currentText != null)
+                    {
+                        currentText.enabled = true;
+                    }
                 }
                 else
                 {
-                    PlayerStatictics.CurrentModifier.GetComponentInChildren<UnityEngine.UI.Text>().enabled = false;
+                    var currentText = PlayerStatictics.CurrentModifier.GetComponentInChildren<Text>();
+                    if (currentText != null)
+                    {
+                        currentText.enabled = false;
+                    }
+
                     PlayerStatictics.CurrentModifier.ModRef.DetachProjectileEffect();
                     PlayerStatictics.CurrentModifier = null;
                 }
@@ -81,7 +79,11 @@ public class ShowModifierDescOnUI : MonoBehaviour, IPointerEnterHandler, IPointe
             else
             {
                 PlayerStatictics.CurrentModifier = this;
-                PlayerStatictics.CurrentModifier.GetComponentInChildren<UnityEngine.UI.Text>().enabled = true;
+                var currentText = PlayerStatictics.CurrentModifier.GetComponentInChildren<Text>();
+                if (currentText != null)
+                {
+                    currentText.enabled = true;
+                }
             }
         }
     }
