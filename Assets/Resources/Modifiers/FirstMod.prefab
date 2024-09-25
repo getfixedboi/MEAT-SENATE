@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 3327564798836393068}
   - component: {fileID: 5499750452825798918}
   - component: {fileID: 2017913616108431862}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: FirstMod
   m_TagString: Untagged
   m_Icon: {fileID: 0}

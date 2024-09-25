@@ -9,6 +9,7 @@ public class ShopItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public ItemBehaviour ItemRef;
     public UnityEngine.UI.Text ItemDescriptionText;
     private int _itemCost;
+    public UnityEngine.UI.Text MeatCounterText;
     public void Start()
     {
         GetComponentInChildren<UnityEngine.UI.Image>().sprite = ItemRef.GetSprite();
@@ -20,10 +21,11 @@ public class ShopItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         if (eventData.button == PointerEventData.InputButton.Left && PlayerSkills.MeatPieceCount >= _itemCost)
         {
             PlayerSkills.MeatPieceCount -= _itemCost;
-            Debug.Log("sozdan");
+            MeatCounterText.text = PlayerSkills.MeatPieceCount.ToString();
             GameObject obj = GameObject.Instantiate(ItemRef.gameObject, GameObject.FindWithTag("Player").transform.forward, new Quaternion());
             obj.GetComponent<ItemBehaviour>().isShop = true;
             obj.GetComponent<ItemBehaviour>().OnGet(true);
+            ItemDescriptionText.text = "";
             Destroy(this.gameObject);
         }
     }

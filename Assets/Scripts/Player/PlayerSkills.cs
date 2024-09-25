@@ -44,7 +44,10 @@ public class PlayerSkills : MonoBehaviour
         {
             if (Input.GetButton("Fire1"))
             {
-                ShootProjectiles();
+                if (!InteractRaycaster.InTabMode)
+                {
+                    ShootProjectiles();
+                }
             }
         }
 

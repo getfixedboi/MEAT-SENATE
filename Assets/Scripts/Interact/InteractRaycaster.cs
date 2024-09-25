@@ -11,15 +11,17 @@ public class InteractRaycaster : MonoBehaviour
     private GameObject _currentHit;
     private RaycastHit _hit;
     [SerializeField] private Text _guideText;
-    [Header("Tab mode ref")][SerializeField] private UnityEngine.UI.Image _tabBG;
+    [Header("Tab mode ref")] public UnityEngine.UI.Image TabBG;
     [SerializeField] private UnityEngine.UI.Image _defaultBG;
+    public static bool InTabMode = false;
     private void Awake()
     {
+        InTabMode = false;
         _mainCamera = this.gameObject;
     }
     private void Start()
     {
-        _tabBG.gameObject.SetActive(false);
+        TabBG.gameObject.SetActive(false);
     }
     private void Update()
     {
@@ -70,20 +72,28 @@ public class InteractRaycaster : MonoBehaviour
     }
     private void EnabledTabMode()
     {
-        Cursor.lockState = CursorLockMode.Confined;
-        Cursor.visible = true;
-        _tabBG.gameObject.SetActive(true);
+        InTabMode = true;
+        if (!MeatBeggar.IsShopping)
+        {
+            Cursor.lockState = CursorLockMode.Confined;
+            Cursor.visible = true;
+            TabBG.gameObject.SetActive(true);
 
-        Color tempColor = _defaultBG.color;
-        _defaultBG.color = new Color(tempColor.r,tempColor.g,tempColor.b,0.314f);
+            Color tempColor = _defaultBG.color;
+            _defaultBG.color = new Color(tempColor.r, tempColor.g, tempColor.b, 0.314f);
+        }
     }
     private void DisabledTabMode()
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-        _tabBG.gameObject.SetActive(false);
+        InTabMode = false;
+        if (!MeatBeggar.IsShopping)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+        TabBG.gameObject.SetActive(false);
 
         Color tempColor = _defaultBG.color;
-        _defaultBG.color = new Color(tempColor.r,tempColor.g,tempColor.b,0.133f);
+        _defaultBG.color = new Color(tempColor.r, tempColor.g, tempColor.b, 0.133f);
     }
 }

@@ -2,23 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Beggar : Interactable
+public class MeatBeggar : Interactable
 {
     [SerializeField] private List<ItemBehaviour> _itemShopPool;
     [SerializeField] private List<ShopItem> _shopDeals;
     [Space][SerializeField] private GameObject _shopCanvas;
     [SerializeField] private List<GameObject> _interactCanvasObjects;
     [SerializeField] private UnityEngine.UI.Text _itemDescriptionText;
+    [SerializeField] private UnityEngine.UI.Text _meatCounter;
     private PlayerCameraMovement _playerCameraComponent;
-    private PlayerMovement _playerMovementComponent;
     private PlayerSkills _playerSkillsComponent;
+    public static bool IsShopping = false;
     protected override void Awake()
     {
         base.Awake();
 
+        IsShopping = false;
+        _meatCounter.text = PlayerSkills.MeatPieceCount.ToString();
+
         GameObject player = GameObject.FindWithTag("Player");
         _playerCameraComponent = player.GetComponentInChildren<PlayerCameraMovement>();
-        _playerMovementComponent = player.GetComponent<PlayerMovement>();
         _playerSkillsComponent = player.GetComponent<PlayerSkills>();
 
         _shopCanvas.SetActive(false);
@@ -30,6 +33,11 @@ public class Beggar : Interactable
     private void Start()
     {
         SetDeals();
+
+        for (int i = 0; i < _shopDeals.Count; i++)
+        {
+            _shopDeals[i].MeatCounterText = _meatCounter;
+        }
     }
     private void Update()
     {
@@ -77,6 +85,7 @@ public class Beggar : Interactable
     }
     private void SwitchComponents(bool value)
     {
+        IsShopping = value;
         _shopCanvas.SetActive(value);
 
         for (int i = 0; i < _interactCanvasObjects.Count; i++)
@@ -85,7 +94,6 @@ public class Beggar : Interactable
         }
 
         _playerCameraComponent.enabled = !value;
-        _playerMovementComponent.enabled = !value;
         _playerSkillsComponent.enabled = !value;
 
         Cursor.lockState = value ? CursorLockMode.Confined : CursorLockMode.Locked;
@@ -118,5 +126,4 @@ public class Beggar : Interactable
             _shopDeals[i].ItemDescriptionText = _itemDescriptionText;
         }
     }
-
 }

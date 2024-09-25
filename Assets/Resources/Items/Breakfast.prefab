@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 8972532706255532819}
   - component: {fileID: 6040062909994727241}
   - component: {fileID: 5896966344526118247}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Breakfast
   m_TagString: Untagged
   m_Icon: {fileID: 0}
