@@ -4,13 +4,12 @@ using System.Collections.Generic;
 using System.Collections;
 using System;
 using UnityEngine.VFX;
-using Unity.VisualScripting.Antlr3.Runtime;
+
 [RequireComponent(typeof(Collider))]
 [RequireComponent(typeof(AudioSource))]
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(NavMeshAgent))]
-
 [DisallowMultipleComponent]
 public abstract class EnemyBehaviour : MonoBehaviour
 {
@@ -27,12 +26,14 @@ public abstract class EnemyBehaviour : MonoBehaviour
     protected float timer;
     protected float totalCooldownTimer;
     #endregion
+    
     #region components
     [SerializeField] protected List<VisualEffect> vfxList;
     protected AudioSource source;
     protected Animator animator;
     protected NavMeshAgent agent;
     #endregion
+    
     #region other
     protected static Transform target;
     protected static float distanceToPlayer;
@@ -47,8 +48,9 @@ public abstract class EnemyBehaviour : MonoBehaviour
     private bool _isRightSide = false;
     private Material _onDamageMaterial;
     private Material _defaultMateral;
-
+    private List<EnemyBehaviour> otherEnemies; // Список других врагов
     #endregion
+
     protected virtual void Awake()
     {
         _meatPiece = Resources.Load<GameObject>("Prefabs/meatPiece");
@@ -66,13 +68,18 @@ public abstract class EnemyBehaviour : MonoBehaviour
         isDead = false;
         agent.speed = movSpeedList[0];
         totalCooldownTimer = 0f;
+
+        // Инициализация списка врагов
+        otherEnemies = new List<EnemyBehaviour>(FindObjectsOfType<EnemyBehaviour>());
     }
+
     protected virtual void Update()
     {
         distanceToPlayer = Vector3.Distance(gameObject.transform.position, target.transform.position);
         totalCooldownTimer -= Time.deltaTime;
         timer += Time.deltaTime;
     }
+
     public virtual void TakeDamage(float receivedDamage)
     {
         if (isDead)
@@ -85,8 +92,6 @@ public abstract class EnemyBehaviour : MonoBehaviour
         }
         else
         {
-            Debug.Log(receivedDamage);
-            Debug.Log(_dmgCanv + " SDPSFK0FH9 EFHUEWF EWBIJ GFEW");
             currentHP -= receivedDamage;
             SpawnDamageCanvas(receivedDamage);
             StartCoroutine(ChangeMaterialOnDamage());
@@ -94,9 +99,7 @@ public abstract class EnemyBehaviour : MonoBehaviour
             if (currentHP <= 0)
             {
                 isDead = true;
-
-                PlayerProgress.KillCount++;//
-
+                PlayerProgress.KillCount++;
                 Death();
             }
         }
@@ -105,9 +108,7 @@ public abstract class EnemyBehaviour : MonoBehaviour
     private IEnumerator ChangeMaterialOnDamage()
     {
         SetMaterial(_onDamageMaterial);
-
         yield return new WaitForSeconds(0.1f);
-
         SetMaterial(_defaultMateral);
     }
 
@@ -124,31 +125,30 @@ public abstract class EnemyBehaviour : MonoBehaviour
     {
         SpawnMeatPieces(UnityEngine.Random.Range(_minRangePieceCount, _maxRangePieceCount + 1), 2f);
     }
+
     private void SpawnMeatPieces(int piecesCount, float spawnRadius)
     {
         for (int i = 0; i < piecesCount; i++)
         {
-            // Вычисляем случайную позицию в радиусе вокруг врага
             Vector3 randomPos = transform.position + UnityEngine.Random.insideUnitSphere * spawnRadius;
             randomPos.y = transform.position.y; // Оставляем ту же высоту, чтобы не улетало вверх или вниз
 
-            // Создаем клон префаба
             GameObject meatPieceClone = Instantiate(_meatPiece, randomPos, Quaternion.identity);
 
-            // Добавляем немного физики, чтобы кусочки разлетались
             Rigidbody rb = meatPieceClone.GetComponent<Rigidbody>();
             if (rb != null)
             {
                 Vector3 randomForce = new Vector3(
                     UnityEngine.Random.Range(-1f, 1f),
-                    UnityEngine.Random.Range(0.5f, 1.5f), // Чуть больше вверх для естественного "разлета"
+                    UnityEngine.Random.Range(0.5f, 1.5f),
                     UnityEngine.Random.Range(-1f, 1f)
                 );
-                rb.AddForce(randomForce * 4f, ForceMode.Impulse); // Применяем силу для разлета
+                rb.AddForce(randomForce * 4f, ForceMode.Impulse);
             }
         }
         Destroy(gameObject);
     }
+
     private void SpawnDamageCanvas(float damage)
     {
         GameObject canvas = GameObject.Instantiate(_dmgCanv);
@@ -157,7 +157,6 @@ public abstract class EnemyBehaviour : MonoBehaviour
         DamageText dmgText = canvas.GetComponentInChildren<DamageText>();
         dmgText.Duration = _dmgCanvLifetime;
         dmgText.Text = damage.ToString();
-        Debug.Log("debag d enemy" + dmgText.Text);
 
         _isRightSide = !_isRightSide;
         dmgText.IsRightSide = _isRightSide;
