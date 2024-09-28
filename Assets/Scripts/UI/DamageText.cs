@@ -24,30 +24,10 @@ public class DamageText : MonoBehaviour
     private float _yRushRngMultliplier;
     private float _xRushRngMultliplier;
 
-    void Awake()
-    {
+    private void Start()
+    {  
         _player = GameObject.FindWithTag("Player");
         _distanceToPlayer = Vector3.Distance(_player.transform.position, transform.position);
-
-       
-
-        //_textComponent = GetComponent<Text>();
-
-        //_textComponent.text = Text;
-    
-
-
-        // Скрываем текст в первый кадр (начальный альфа-канал = 0)
-        //_startColor = new Color(_startColor.r, _startColor.g, _startColor.b, 0);
-        //_textComponent.color = _startColor;
-
-
-        //SpreadParams();
-    }
-
-
-    private void Start()
-    {
         _textComponent = GetComponent<Text>();
         _textComponent.text = Text;
         _startColor = new Color(_startColor.r, _startColor.g, _startColor.b, 0);
