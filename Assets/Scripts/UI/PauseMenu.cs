@@ -1,0 +1,86 @@
+using UnityEngine;
+using UnityEngine.UI;
+using System.IO;
+
+[DisallowMultipleComponent]
+public class PauseMenu : MonoBehaviour
+{
+    [SerializeField] private PlayerCameraMovement _cameraMovement;
+    [Space]
+    [Header("Canvas references")]
+    [SerializeField] private Canvas _playerInterface;
+    [SerializeField] private Canvas _shopInterface;
+    private Canvas _selfRef;
+    [Header("Settings elements references")]
+    [SerializeField] private Slider _volumeSlider; // Добавили ссылку на слайдер громкости
+    [SerializeField] private Slider _mouseSensitivitySlider; // Добавили ссылку на слайдер чувствительности мыши
+    [SerializeField] private Toggle _vsyncToggle;
+
+    public static bool IsPaused;
+
+    private void Awake()
+    {
+        IsPaused = false;
+        _selfRef = GetComponent<Canvas>();
+        _selfRef.enabled = false;
+    }
+
+    private void Update()
+    {
+        if (!Input.GetKeyDown(KeyCode.Escape)) { return; }
+
+        if(IsPaused)
+        {
+            ClosePauseMenu();
+        }
+        else if(!_shopInterface.gameObject.activeInHierarchy)
+        {
+            OpenPauseMenu();
+        }
+    }
+
+    private void OpenPauseMenu()
+    {
+        Time.timeScale = 0f;
+        IsPaused = true;
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+
+        _playerInterface.gameObject.SetActive(false);
+        _selfRef.enabled = true;
+
+    }
+
+    public void ClosePauseMenu()
+    {
+        Time.timeScale = 1f;
+        IsPaused = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        _playerInterface.gameObject.SetActive(true);
+        _selfRef.enabled = false;
+    }
+
+
+    public void QuitGame()
+    {
+        ClosePauseMenu();
+        Application.Quit(1);
+    }
+
+    public void ToggleVSync()
+    {
+        QualitySettings.vSyncCount = _vsyncToggle.isOn ? 1 : 0;
+    }
+
+    public void ChangeVolume()
+    {
+        AudioListener.volume = _volumeSlider.value;
+    }
+
+    public void ChangeMouseSensitivity()
+    {
+        _cameraMovement.MouseSensivity = _mouseSensitivitySlider.value;
+    }
+}

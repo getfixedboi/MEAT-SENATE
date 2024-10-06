@@ -68,14 +68,14 @@ public abstract class ModifierBehaviour : Interactable
     {
         playerStats.AddModifier(this,param);
     }
-    public void OnDrop()
-    {
-        playerStats.RemoveModifier(this);
-    }
-    public void OnDrop(ModifierBehaviour item)
-    {
-        playerStats.RemoveModifier(item);
-    }
+    // public void OnDrop()
+    // {
+    //     playerStats.RemoveModifier(this);
+    // }
+    // public void OnDrop(ModifierBehaviour item)
+    // {
+    //     playerStats.RemoveModifier(item);
+    // }
     public override sealed void OnFocus()
     {
         InteractText = $"{GetDesc()}" + $"\n\n[E] - Take";
@@ -92,7 +92,7 @@ public abstract class ModifierBehaviour : Interactable
         }
         catch (ArgumentException)
         {
-            OnDrop();
+            //OnDrop();
         }
     }
     public abstract void SetDesc();

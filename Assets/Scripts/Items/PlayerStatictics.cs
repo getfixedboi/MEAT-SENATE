@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 [DisallowMultipleComponent]
 public class PlayerStatictics : MonoBehaviour
@@ -41,7 +43,7 @@ public class PlayerStatictics : MonoBehaviour
     }
     private void Update()
     {
-        _healthText.text = СurrentHP.ToString() + "/" + MaxHP.ToString();
+        //_healthText.text = СurrentHP.ToString() + "/" + MaxHP.ToString();
     }
 
     public void Heal(float healAmount)
@@ -51,6 +53,7 @@ public class PlayerStatictics : MonoBehaviour
         {
             СurrentHP = MaxHP;
         }
+        _healthText.text = СurrentHP.ToString() + "/" + MaxHP.ToString();
     }
 
     public void TakeDamage(float inflictedDamage)
@@ -58,7 +61,7 @@ public class PlayerStatictics : MonoBehaviour
         if (_invincibility) { return; }
 
         СurrentHP -= inflictedDamage;
-        
+
         PlayerProgress.ReceivedDamage += inflictedDamage;//
 
         StartCoroutine(C_TemporaryInvinsibility());
@@ -77,7 +80,7 @@ public class PlayerStatictics : MonoBehaviour
             TakeFromGroundItem(item.gameObject);
 
             _playerItems.Add(item);
-            ReloadItemUI();
+            AddItemUI(item);
         }
         else
         {
@@ -86,6 +89,7 @@ public class PlayerStatictics : MonoBehaviour
     }
     public void AddItem(ItemBehaviour item, bool param)
     {
+        Profiler.BeginSample("adding item");
         if (!_playerItems.Contains(item))
         {
             if (param)
@@ -125,19 +129,19 @@ public class PlayerStatictics : MonoBehaviour
                 item.gameObject.SetActive(false);
             }
             _playerItems.Add(item);
-            ReloadItemUI();
+            AddItemUI(item);
         }
         else
         {
             throw new ArgumentException($"Item {item.name} is already taken");
         }
+        Profiler.EndSample();
     }
     public void RemoveItem(ItemBehaviour item)
     {
         if (_playerItems.Contains(item))
         {
-            _playerItems.Remove(item);
-            ReloadItemUI();
+            RemoveItemUI(item);
 
             ThrowAwayItem(item.gameObject);
         }
@@ -146,41 +150,83 @@ public class PlayerStatictics : MonoBehaviour
             throw new ArgumentException($"Item {item.name} does not exists");
         }
     }
-    private void ReloadItemUI()
+    // private void ReloadItemUI()
+    // {
+    //     // Удаляем старые UI элементы
+    //     for (int i = 0; i < _itemUiPrefabs.Count; i++)
+    //     {
+    //         Destroy(_itemUiPrefabs[i]);
+    //     }
+    //     _itemUiPrefabs.Clear();
+
+    //     int horizontalDelay = 0;
+    //     foreach (ItemBehaviour item in _playerItems)
+    //     {
+    //         Vector3 extraOffset = new Vector3(horizontalDelay * 150, 0, 0);
+    //         horizontalDelay++;
+
+    //         // Создаем новый экземпляр префаба
+    //         GameObject gameObj = Instantiate(_itemImagePrefab, _playerCanvas.transform.position + ItemOffset + extraOffset, Quaternion.identity);
+
+    //         // Добавляем компонент только к экземпляру
+    //         ItemBehaviour itemRef = item.GetComponent<ItemBehaviour>();
+    //         gameObj.GetComponent<ShowItemDescOnUI>().ItemRef = itemRef;
+
+    //         // Настраиваем компонент ShowItemDescOnUI
+    //         var showItemDesc = gameObj.GetComponent<ShowItemDescOnUI>();
+    //         if (showItemDesc != null)
+    //         {
+    //             showItemDesc.Canvas = _playerCanvas;
+    //         }
+
+    //         // Устанавливаем родителя для позиционирования UI элемента
+    //         gameObj.transform.SetParent(_playerCanvas.transform, false);
+
+    //         // Добавляем созданный экземпляр в список для дальнейшего использования
+    //         _itemUiPrefabs.Add(gameObj);
+    //     }
+    // }
+    private void AddItemUI(ItemBehaviour item)
     {
-        // Удаляем старые UI элементы
-        for (int i = 0; i < _itemUiPrefabs.Count; i++)
+        Vector3 extraOffset = new Vector3((_playerItems.Count - 1) * 150, 0, 0);
+        // Создаем новый экземпляр префаба
+        GameObject gameObj = Instantiate(_itemImagePrefab, _playerCanvas.transform.position + ItemOffset + extraOffset, Quaternion.identity);
+
+        // Добавляем компонент только к экземпляру
+        ItemBehaviour itemRef = item.GetComponent<ItemBehaviour>();
+        gameObj.GetComponent<ShowItemDescOnUI>().ItemRef = itemRef;
+
+        // Настраиваем компонент ShowItemDescOnUI
+        var showItemDesc = gameObj.GetComponent<ShowItemDescOnUI>();
+        if (showItemDesc != null)
         {
-            Destroy(_itemUiPrefabs[i]);
+            showItemDesc.Canvas = _playerCanvas;
         }
-        _itemUiPrefabs.Clear();
 
-        int horizontalDelay = 0;
-        foreach (ItemBehaviour item in _playerItems)
+        // Устанавливаем родителя для позиционирования UI элемента
+        gameObj.transform.SetParent(_playerCanvas.transform, false);
+
+        // Добавляем созданный экземпляр в список для дальнейшего использования
+        _itemUiPrefabs.Add(gameObj);
+    }
+
+    private void RemoveItemUI(ItemBehaviour item)
+    {
+        List<ItemBehaviour> list = _playerItems.ToList();
+        //Debug.Log(list.IndexOf(item));
+        if (list.IndexOf(item) != _itemUiPrefabs.Count)
         {
-            Vector3 extraOffset = new Vector3(horizontalDelay * 150, 0, 0);
-            horizontalDelay++;
-
-            // Создаем новый экземпляр префаба
-            GameObject gameObj = Instantiate(_itemImagePrefab, _playerCanvas.transform.position + ItemOffset + extraOffset, Quaternion.identity);
-
-            // Добавляем компонент только к экземпляру
-            ItemBehaviour itemRef = item.GetComponent<ItemBehaviour>();
-            gameObj.GetComponent<ShowItemDescOnUI>().ItemRef = itemRef;
-
-            // Настраиваем компонент ShowItemDescOnUI
-            var showItemDesc = gameObj.GetComponent<ShowItemDescOnUI>();
-            if (showItemDesc != null)
+            for (int i = list.IndexOf(item); i < _itemUiPrefabs.Count; i++)
             {
-                showItemDesc.Canvas = _playerCanvas;
+                Vector3 temp = _itemUiPrefabs[i].gameObject.transform.position;
+                _itemUiPrefabs[i].gameObject.transform.position = new Vector3(temp.x - 150, temp.y, temp.z);
             }
-
-            // Устанавливаем родителя для позиционирования UI элемента
-            gameObj.transform.SetParent(_playerCanvas.transform, false);
-
-            // Добавляем созданный экземпляр в список для дальнейшего использования
-            _itemUiPrefabs.Add(gameObj);
         }
+
+        GameObject tempItem = _itemUiPrefabs[list.IndexOf(item)];
+        _itemUiPrefabs.Remove(tempItem);
+        _playerItems.Remove(item);
+        Destroy(tempItem);
     }
     #endregion
     #region modifiers management
@@ -216,20 +262,20 @@ public class PlayerStatictics : MonoBehaviour
             throw new ArgumentException($"Modifier {item.name} is already taken");
         }
     }
-    public void RemoveModifier(ModifierBehaviour item)
-    {
-        if (_playerModifiers.Contains(item))
-        {
-            _playerModifiers.Remove(item);
-            ReloadModifierUI();
+    // public void RemoveModifier(ModifierBehaviour item)
+    // {
+    //     if (_playerModifiers.Contains(item))
+    //     {
+    //         _playerModifiers.Remove(item);
+    //         ReloadModifierUI();
 
-            ThrowAwayItem(item.gameObject);
-        }
-        else
-        {
-            throw new ArgumentException($"Item {item.name} does not exists");
-        }
-    }
+    //         ThrowAwayItem(item.gameObject);
+    //     }
+    //     else
+    //     {
+    //         throw new ArgumentException($"Item {item.name} does not exists");
+    //     }
+    // }
     private void ReloadModifierUI()
     {
         // Удаляем старые UI элементы
@@ -265,17 +311,17 @@ public class PlayerStatictics : MonoBehaviour
             // Добавляем созданный экземпляр в список для дальнейшего использования
             _modifierUiPrefabs.Add(gameObj);
 
-            if(modRef==null)
+            if (modRef == null)
             {
                 UnityEngine.Debug.Log("Не удалось скопировать ссылку на компонент");
 
                 modRef = mod.GetComponentInChildren<ModifierBehaviour>();
-                if(modRef==null)
+                if (modRef == null)
                 {
                     UnityEngine.Debug.Log("Не удается снять ссылку с предмета");
                 }
             }
-            else if(gameObj.GetComponent<ShowModifierDescOnUI>().ModRef==null)
+            else if (gameObj.GetComponent<ShowModifierDescOnUI>().ModRef == null)
             {
                 UnityEngine.Debug.Log("Ссылка по прежнему не была установлена");
             }
