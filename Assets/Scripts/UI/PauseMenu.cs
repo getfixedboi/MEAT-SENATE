@@ -10,7 +10,7 @@ public class PauseMenu : MonoBehaviour
     [Header("Canvas references")]
     [SerializeField] private Canvas _playerInterface;
     [SerializeField] private Canvas _shopInterface;
-    private Canvas _selfRef;
+    [SerializeField] private GameObject _selfRef;
     [Header("Settings elements references")]
     [SerializeField] private Slider _volumeSlider; // Добавили ссылку на слайдер громкости
     [SerializeField] private Slider _mouseSensitivitySlider; // Добавили ссылку на слайдер чувствительности мыши
@@ -21,8 +21,9 @@ public class PauseMenu : MonoBehaviour
     private void Awake()
     {
         IsPaused = false;
-        _selfRef = GetComponent<Canvas>();
-        _selfRef.enabled = false;
+        _selfRef.gameObject.SetActive(false);
+        _volumeSlider.value = AudioListener.volume;
+        _mouseSensitivitySlider.value = _cameraMovement.MouseSensivity;
     }
 
     private void Update()
@@ -47,7 +48,7 @@ public class PauseMenu : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
 
         _playerInterface.gameObject.SetActive(false);
-        _selfRef.enabled = true;
+        _selfRef.gameObject.SetActive(true);
 
     }
 
@@ -59,7 +60,7 @@ public class PauseMenu : MonoBehaviour
         Cursor.visible = false;
 
         _playerInterface.gameObject.SetActive(true);
-        _selfRef.enabled = false;
+        _selfRef.gameObject.SetActive(false);
     }
 
 

@@ -37,6 +37,7 @@ public class PlayerSkills : MonoBehaviour
     }
     private void Update()
     {
+        if(PauseMenu.IsPaused) return;
         _meatPieceCountOutput.text = MeatPieceCount.ToString() + "/" + _meatPieceReqiureCount.ToString();
         _nextSkillUseTime -= Time.deltaTime;
 

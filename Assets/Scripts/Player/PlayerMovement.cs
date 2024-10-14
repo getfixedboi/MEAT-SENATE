@@ -23,6 +23,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        if (PauseMenu.IsPaused) return;
         float axis = Input.GetAxis("Horizontal");
         float axis2 = Input.GetAxis("Vertical");
         MoveInput = new Vector3(axis, 0f, axis2);
