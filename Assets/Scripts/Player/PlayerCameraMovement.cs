@@ -41,8 +41,6 @@ public class PlayerCameraMovement : MonoBehaviour
     {
         _defaultPosY = transform.localPosition.y;
         _origRotation = transform.rotation;
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
     }
 
     private void Update()

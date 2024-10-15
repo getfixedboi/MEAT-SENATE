@@ -11,6 +11,8 @@ public class ShowModifierDescOnUI : MonoBehaviour, IPointerEnterHandler, IPointe
 
     public Vector3 offset;  // Смещение префаба относительно курсора
 
+    public static GameObject prefab;
+
     public void Start()
     {
         GetComponent<Image>().sprite = ModRef.GetSprite();
@@ -32,6 +34,7 @@ public class ShowModifierDescOnUI : MonoBehaviour, IPointerEnterHandler, IPointe
             out worldPoint
         );
         instantiatedPrefab.transform.position = worldPoint + offset;
+        prefab = instantiatedPrefab;
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -40,6 +43,7 @@ public class ShowModifierDescOnUI : MonoBehaviour, IPointerEnterHandler, IPointe
         if (instantiatedPrefab != null)
         {
             Destroy(instantiatedPrefab);
+            prefab = null;
         }
     }
 

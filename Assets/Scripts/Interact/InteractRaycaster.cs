@@ -25,6 +25,11 @@ public class InteractRaycaster : MonoBehaviour
     }
     private void Update()
     {
+        if (PauseMenu.IsPaused)
+        {
+            DisabledTabMode();
+            return;
+        }
         if (Input.GetKey(KeyCode.Tab))
         {
             EnabledTabMode();
@@ -72,11 +77,9 @@ public class InteractRaycaster : MonoBehaviour
     }
     private void EnabledTabMode()
     {
-        InTabMode = true;
-        if (!MeatBeggar.IsShopping)
+        if (!MeatBeggar.IsShopping || !PauseMenu.IsPaused)
         {
-            Cursor.lockState = CursorLockMode.Confined;
-            Cursor.visible = true;
+            InTabMode = true;
             TabBG.gameObject.SetActive(true);
 
             Color tempColor = _defaultBG.color;
@@ -86,11 +89,6 @@ public class InteractRaycaster : MonoBehaviour
     private void DisabledTabMode()
     {
         InTabMode = false;
-        if (!MeatBeggar.IsShopping)
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
         TabBG.gameObject.SetActive(false);
 
         Color tempColor = _defaultBG.color;

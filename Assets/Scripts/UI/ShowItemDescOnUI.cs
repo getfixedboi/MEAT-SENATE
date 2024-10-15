@@ -6,10 +6,12 @@ public class ShowItemDescOnUI : MonoBehaviour, IPointerEnterHandler, IPointerExi
 {
     public ItemBehaviour ItemRef;
     public GameObject prefabToShow;  // Префаб, который будет появляться 
-    private GameObject instantiatedPrefab;
+    public GameObject instantiatedPrefab;
     public Canvas Canvas;  // Убедитесь, что это ваш Canvas
 
     public Vector3 offset;  // Смещение префаба относительно курсора
+
+    public static GameObject prefab;
 
     public void Start()
     {
@@ -32,6 +34,7 @@ public class ShowItemDescOnUI : MonoBehaviour, IPointerEnterHandler, IPointerExi
             out worldPoint
         );
         instantiatedPrefab.transform.position = worldPoint + offset;
+        prefab = instantiatedPrefab;
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -39,6 +42,7 @@ public class ShowItemDescOnUI : MonoBehaviour, IPointerEnterHandler, IPointerExi
         // Уничтожаем префаб, когда курсор покидает область
         if (instantiatedPrefab != null)
         {
+            prefab = null;
             Destroy(instantiatedPrefab);
         }
     }
@@ -53,6 +57,7 @@ public class ShowItemDescOnUI : MonoBehaviour, IPointerEnterHandler, IPointerExi
             {
                 // Вызываем OnDrop() для текущего объекта
                 itemBehaviour.OnDrop();
+                prefab = null;
             }
         }
     }

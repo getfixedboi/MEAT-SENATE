@@ -95,9 +95,6 @@ public class MeatBeggar : Interactable
 
         _playerCameraComponent.enabled = !value;
         _playerSkillsComponent.enabled = !value;
-
-        Cursor.lockState = value ? CursorLockMode.Confined : CursorLockMode.Locked;
-        Cursor.visible = value;
     }
 
     [ContextMenu("Set Deals")]

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
+using UnityEngine.EventSystems;
 
 [DisallowMultipleComponent]
 public class PauseMenu : MonoBehaviour
@@ -30,11 +31,11 @@ public class PauseMenu : MonoBehaviour
     {
         if (!Input.GetKeyDown(KeyCode.Escape)) { return; }
 
-        if(IsPaused)
+        if (IsPaused)
         {
             ClosePauseMenu();
         }
-        else if(!_shopInterface.gameObject.activeInHierarchy)
+        else if (!_shopInterface.gameObject.activeInHierarchy)
         {
             OpenPauseMenu();
         }
@@ -44,8 +45,6 @@ public class PauseMenu : MonoBehaviour
     {
         Time.timeScale = 0f;
         IsPaused = true;
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
 
         _playerInterface.gameObject.SetActive(false);
         _selfRef.gameObject.SetActive(true);
@@ -56,11 +55,20 @@ public class PauseMenu : MonoBehaviour
     {
         Time.timeScale = 1f;
         IsPaused = false;
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
 
         _playerInterface.gameObject.SetActive(true);
         _selfRef.gameObject.SetActive(false);
+
+        if (ShowItemDescOnUI.prefab)
+        {
+            Destroy(ShowItemDescOnUI.prefab);
+            ShowItemDescOnUI.prefab = null;
+        }
+        if (ShowModifierDescOnUI.prefab)
+        {
+            Destroy(ShowModifierDescOnUI.prefab);
+            ShowModifierDescOnUI.prefab = null;
+        }
     }
 
 
