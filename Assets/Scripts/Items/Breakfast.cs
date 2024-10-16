@@ -21,6 +21,7 @@ public class Breakfast : ItemBehaviour
         {
             playerStats.СurrentHP = playerStats.maxHP;
         }
+        playerStats.maxHP -= 0;// like 
     }
     public override void SetDesc()
     {

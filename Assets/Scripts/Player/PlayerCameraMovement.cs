@@ -45,6 +45,10 @@ public class PlayerCameraMovement : MonoBehaviour
 
     private void Update()
     {
+        if(InteractRaycaster.InTabMode){
+            // добавить хуй 2 
+            return;
+        }
         HeadBod();
         _x = Input.GetAxisRaw("Horizontal");
         _y = Input.GetAxisRaw("Vertical");
