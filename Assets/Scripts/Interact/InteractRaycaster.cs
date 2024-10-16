@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,6 +15,7 @@ public class InteractRaycaster : MonoBehaviour
     [Header("Tab mode ref")] public UnityEngine.UI.Image TabBG;
     [SerializeField] private UnityEngine.UI.Image _defaultBG;
     public static bool InTabMode = false;
+    private bool _canInteracted = true;
     private void Awake()
     {
         InTabMode = false;
@@ -57,7 +59,11 @@ public class InteractRaycaster : MonoBehaviour
 
                     if (Input.GetKeyDown(KeyCode.E))
                     {
-                        _interactable.OnInteract();
+                        if (_canInteracted)
+                        {
+                            StartCoroutine(C_InteractCooldown());
+                            _interactable.OnInteract();
+                        }
                     }
                 }
             }
@@ -93,5 +99,12 @@ public class InteractRaycaster : MonoBehaviour
 
         Color tempColor = _defaultBG.color;
         _defaultBG.color = new Color(tempColor.r, tempColor.g, tempColor.b, 0.133f);
+    }
+
+    private IEnumerator C_InteractCooldown()
+    {
+        _canInteracted = false;
+        yield return new WaitForSeconds(0.5f);
+        _canInteracted = true;
     }
 }

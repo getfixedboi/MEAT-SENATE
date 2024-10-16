@@ -11,15 +11,15 @@ public class Breakfast : ItemBehaviour
     }
     public override void GetEffect()
     {
-        playerStats.MaxHP += 5;
+        playerStats.maxHP += 5;
     }
 
     public override void LoseEffect()
     {
-        playerStats.MaxHP -= 5;
-        if (playerStats.СurrentHP > playerStats.MaxHP)
+        playerStats.maxHP -= 5;
+        if (playerStats.СurrentHP > playerStats.maxHP)
         {
-            playerStats.СurrentHP = playerStats.MaxHP;
+            playerStats.СurrentHP = playerStats.maxHP;
         }
     }
     public override void SetDesc()

@@ -268,4 +268,5 @@ MonoBehaviour:
   ModRef: {fileID: 0}
   prefabToShow: {fileID: 3876044135576106291, guid: 3021094c43c55db49b622b8149df2b81, type: 3}
   Canvas: {fileID: 0}
-  offset: {x: -200, y: 200, z: 0}
+  offsetXPercent: -12
+  offsetYPercent: 12

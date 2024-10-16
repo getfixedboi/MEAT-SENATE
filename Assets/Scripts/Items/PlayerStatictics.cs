@@ -15,7 +15,19 @@ public class PlayerStatictics : MonoBehaviour
     #endregion
     #region params
     [Header("Parameters")]
-    public float MaxHP;
+    private float MaxHP = 100;
+    public float maxHP
+    {
+        get
+        {
+            return MaxHP;
+        }
+        set
+        {
+            MaxHP = value;
+            _healthText.text = СurrentHP.ToString() + "/" + MaxHP.ToString();
+        }
+    }
     public float СurrentHP;
     private bool _invincibility = false;
     [SerializeField][Range(0.1f, 40f)] private float _invincibilityPeriod;
@@ -31,7 +43,7 @@ public class PlayerStatictics : MonoBehaviour
     private static List<GameObject> _modifierUiPrefabs = new List<GameObject>();
     public static ShowModifierDescOnUI CurrentModifier;
     public GameObject ItemGrid;
-    public Vector3 ModifierOffset;
+    public GameObject ModGrid;
 
     private void Awake()
     {
@@ -39,11 +51,11 @@ public class PlayerStatictics : MonoBehaviour
         _playerModifiers = new HashSet<ModifierBehaviour>();
         СurrentHP = MaxHP;
 
-        _healthText.text = MaxHP.ToString() + "/" + СurrentHP.ToString();
+        _healthText.text = СurrentHP.ToString() + "/" + MaxHP.ToString();
     }
     private void Update()
     {
-        //
+        //Я ДАУН Я ДАУН Я ДАУН Я ДАУН Я ДАУН Я ДАУН Я ДАУН Я ДАУН Я ДАУН Я ДАУН Я ДАУН Я ДАУН Я ДАУН Я ДАУН Я ДАУН 
     }
 
     public void Heal(float healAmount)
@@ -63,9 +75,9 @@ public class PlayerStatictics : MonoBehaviour
         СurrentHP -= inflictedDamage;
 
         PlayerProgress.ReceivedDamage += inflictedDamage;//
-        _healthText.text = MaxHP.ToString() + "/" + СurrentHP.ToString();
+        _healthText.text = СurrentHP.ToString() + "/" + MaxHP.ToString();
         StartCoroutine(C_TemporaryInvinsibility());
-        
+
     }
     private IEnumerator C_TemporaryInvinsibility()
     {
@@ -76,14 +88,13 @@ public class PlayerStatictics : MonoBehaviour
     #region items management
     public void AddItem(ItemBehaviour item)
     {
-        _healthText.text = СurrentHP.ToString() + "/" + MaxHP.ToString();
         if (!_playerItems.Contains(item))
         {
             TakeFromGroundItem(item.gameObject);
 
             _playerItems.Add(item);
             AddItemUI(item);
-            
+
         }
         else
         {
@@ -92,9 +103,6 @@ public class PlayerStatictics : MonoBehaviour
     }
     public void AddItem(ItemBehaviour item, bool param)
     {
-        _healthText.text = СurrentHP.ToString() + "/" + MaxHP.ToString();
-        Profiler.BeginSample("adding item");
-        
         if (!_playerItems.Contains(item))
         {
             if (param)
@@ -140,7 +148,6 @@ public class PlayerStatictics : MonoBehaviour
         {
             throw new ArgumentException($"Item {item.name} is already taken");
         }
-        Profiler.EndSample();
     }
     public void RemoveItem(ItemBehaviour item)
     {
@@ -149,49 +156,12 @@ public class PlayerStatictics : MonoBehaviour
             RemoveItemUI(item);
 
             ThrowAwayItem(item.gameObject);
-            _healthText.text = СurrentHP.ToString() + "/" + MaxHP.ToString();
         }
         else
         {
             throw new ArgumentException($"Item {item.name} does not exists");
         }
     }
-    // private void ReloadItemUI()
-    // {
-    //     // Удаляем старые UI элементы
-    //     for (int i = 0; i < _itemUiPrefabs.Count; i++)
-    //     {
-    //         Destroy(_itemUiPrefabs[i]);
-    //     }
-    //     _itemUiPrefabs.Clear();
-
-    //     int horizontalDelay = 0;
-    //     foreach (ItemBehaviour item in _playerItems)
-    //     {
-    //         Vector3 extraOffset = new Vector3(horizontalDelay * 150, 0, 0);
-    //         horizontalDelay++;
-
-    //         // Создаем новый экземпляр префаба
-    //         GameObject gameObj = Instantiate(_itemImagePrefab, _playerCanvas.transform.position + ItemOffset + extraOffset, Quaternion.identity);
-
-    //         // Добавляем компонент только к экземпляру
-    //         ItemBehaviour itemRef = item.GetComponent<ItemBehaviour>();
-    //         gameObj.GetComponent<ShowItemDescOnUI>().ItemRef = itemRef;
-
-    //         // Настраиваем компонент ShowItemDescOnUI
-    //         var showItemDesc = gameObj.GetComponent<ShowItemDescOnUI>();
-    //         if (showItemDesc != null)
-    //         {
-    //             showItemDesc.Canvas = _playerCanvas;
-    //         }
-
-    //         // Устанавливаем родителя для позиционирования UI элемента
-    //         gameObj.transform.SetParent(_playerCanvas.transform, false);
-
-    //         // Добавляем созданный экземпляр в список для дальнейшего использования
-    //         _itemUiPrefabs.Add(gameObj);
-    //     }
-    // }
     private void AddItemUI(ItemBehaviour item)
     {
         // Создаем новый экземпляр префаба
@@ -257,20 +227,6 @@ public class PlayerStatictics : MonoBehaviour
             throw new ArgumentException($"Modifier {item.name} is already taken");
         }
     }
-    // public void RemoveModifier(ModifierBehaviour item)
-    // {
-    //     if (_playerModifiers.Contains(item))
-    //     {
-    //         _playerModifiers.Remove(item);
-    //         ReloadModifierUI();
-
-    //         ThrowAwayItem(item.gameObject);
-    //     }
-    //     else
-    //     {
-    //         throw new ArgumentException($"Item {item.name} does not exists");
-    //     }
-    // }
     private void ReloadModifierUI()
     {
         // Удаляем старые UI элементы
@@ -280,14 +236,11 @@ public class PlayerStatictics : MonoBehaviour
         }
         _modifierUiPrefabs.Clear();
 
-        int horizontalDelay = 0;
         foreach (ModifierBehaviour mod in _playerModifiers)
         {
-            Vector3 extraOffset = new Vector3(horizontalDelay * 150, 0, 0);
-            horizontalDelay--;
 
             // Создаем новый экземпляр префаба
-            GameObject gameObj = Instantiate(_modifierImagePrefab, _playerCanvas.transform.position + ModifierOffset + extraOffset, Quaternion.identity);
+            GameObject gameObj = Instantiate(_modifierImagePrefab, _playerCanvas.transform.position, Quaternion.identity);
 
             // Добавляем компонент только к экземпляру
             ModifierBehaviour modRef = mod.GetComponentInChildren<ModifierBehaviour>();
@@ -301,7 +254,7 @@ public class PlayerStatictics : MonoBehaviour
             }
 
             // Устанавливаем родителя для позиционирования UI элемента
-            gameObj.transform.SetParent(_playerCanvas.transform, false);
+            gameObj.transform.SetParent(ModGrid.transform, false);
 
             // Добавляем созданный экземпляр в список для дальнейшего использования
             _modifierUiPrefabs.Add(gameObj);

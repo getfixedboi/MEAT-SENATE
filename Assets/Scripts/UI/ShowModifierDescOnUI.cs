@@ -8,12 +8,13 @@ public class ShowModifierDescOnUI : MonoBehaviour, IPointerEnterHandler, IPointe
     public GameObject prefabToShow;  // Префаб, который будет появляться 
     private GameObject instantiatedPrefab;
     public Canvas Canvas;  // Убедитесь, что это ваш Canvas
-
-    public Vector3 offset;  // Смещение префаба относительно курсора
-
     public static GameObject prefab;
 
-    public void Start()
+    [Space]
+    [Range(-100, 100)] public float offsetXPercent; // Офсет по X в процентах
+    [Range(-100, 100)] public float offsetYPercent; // Офсет по Y в процентах
+
+    private void Start()
     {
         GetComponent<Image>().sprite = ModRef.GetSprite();
     }
@@ -25,15 +26,7 @@ public class ShowModifierDescOnUI : MonoBehaviour, IPointerEnterHandler, IPointe
 
         // Создаем префаб и позиционируем его с учетом смещения
         instantiatedPrefab = Instantiate(prefabToShow, Canvas.transform);
-
-        Vector3 worldPoint;
-        RectTransformUtility.ScreenPointToWorldPointInRectangle(
-            Canvas.GetComponent<RectTransform>(),
-            Input.mousePosition,
-            Canvas.worldCamera,
-            out worldPoint
-        );
-        instantiatedPrefab.transform.position = worldPoint + offset;
+        PositionPrefab(instantiatedPrefab);
         prefab = instantiatedPrefab;
     }
 
@@ -42,8 +35,8 @@ public class ShowModifierDescOnUI : MonoBehaviour, IPointerEnterHandler, IPointe
         // Уничтожаем префаб, когда курсор покидает область
         if (instantiatedPrefab != null)
         {
-            Destroy(instantiatedPrefab);
             prefab = null;
+            Destroy(instantiatedPrefab);
         }
     }
 
@@ -51,37 +44,52 @@ public class ShowModifierDescOnUI : MonoBehaviour, IPointerEnterHandler, IPointe
     {
         if (eventData.button == PointerEventData.InputButton.Middle)
         {
-            if (PlayerStatictics.CurrentModifier != null)
-            {
-                if (PlayerStatictics.CurrentModifier != this)
-                {
-                    var previousText = PlayerStatictics.CurrentModifier.GetComponentInChildren<Text>();
-                    if (previousText != null)
-                    {
-                        previousText.enabled = false;
-                    }
-                    PlayerStatictics.CurrentModifier.ModRef.DetachProjectileEffect();
-                    PlayerStatictics.CurrentModifier = this;
-                    var currentText = PlayerStatictics.CurrentModifier.GetComponentInChildren<Text>();
-                    if (currentText != null)
-                    {
-                        currentText.enabled = true;
-                    }
-                }
-                else
-                {
-                    var currentText = PlayerStatictics.CurrentModifier.GetComponentInChildren<Text>();
-                    if (currentText != null)
-                    {
-                        currentText.enabled = false;
-                    }
+            HandleModifierSelection();
+        }
+    }
 
-                    PlayerStatictics.CurrentModifier.ModRef.DetachProjectileEffect();
-                    PlayerStatictics.CurrentModifier = null;
-                }
-            }
-            else
+    private void Update()
+    {
+        // Обновляем позицию префаба с учетом смещения
+        if (instantiatedPrefab != null)
+        {
+            PositionPrefab(instantiatedPrefab);
+        }
+    }
+
+    private void PositionPrefab(GameObject prefab)
+    {
+        // Получаем размеры экрана
+        float screenWidth = Screen.width;
+        float screenHeight = Screen.height;
+
+        // Вычисляем офсет на основе разрешения экрана
+        float offsetX = (offsetXPercent / 100f) * screenWidth;
+        float offsetY = (offsetYPercent / 100f) * screenHeight;
+
+        Vector3 worldPoint;
+        RectTransformUtility.ScreenPointToWorldPointInRectangle(
+            Canvas.GetComponent<RectTransform>(),
+            Input.mousePosition,
+            Canvas.worldCamera,
+            out worldPoint
+        );
+
+        prefab.transform.position = worldPoint + new Vector3(offsetX, offsetY, 0);
+    }
+
+    private void HandleModifierSelection()
+    {
+        if (PlayerStatictics.CurrentModifier != null)
+        {
+            if (PlayerStatictics.CurrentModifier != this)
             {
+                var previousText = PlayerStatictics.CurrentModifier.GetComponentInChildren<Text>();
+                if (previousText != null)
+                {
+                    previousText.enabled = false;
+                }
+                PlayerStatictics.CurrentModifier.ModRef.DetachProjectileEffect();
                 PlayerStatictics.CurrentModifier = this;
                 var currentText = PlayerStatictics.CurrentModifier.GetComponentInChildren<Text>();
                 if (currentText != null)
@@ -89,22 +97,26 @@ public class ShowModifierDescOnUI : MonoBehaviour, IPointerEnterHandler, IPointe
                     currentText.enabled = true;
                 }
             }
-        }
-    }
+            else
+            {
+                var currentText = PlayerStatictics.CurrentModifier.GetComponentInChildren<Text>();
+                if (currentText != null)
+                {
+                    currentText.enabled = false;
+                }
 
-    void Update()
-    {
-        // Обновляем позицию префаба с учетом смещения
-        if (instantiatedPrefab != null)
+                PlayerStatictics.CurrentModifier.ModRef.DetachProjectileEffect();
+                PlayerStatictics.CurrentModifier = null;
+            }
+        }
+        else
         {
-            Vector3 worldPoint;
-            RectTransformUtility.ScreenPointToWorldPointInRectangle(
-                Canvas.GetComponent<RectTransform>(),
-                Input.mousePosition,
-                Canvas.worldCamera,
-                out worldPoint
-            );
-            instantiatedPrefab.transform.position = worldPoint + offset;
+            PlayerStatictics.CurrentModifier = this;
+            var currentText = PlayerStatictics.CurrentModifier.GetComponentInChildren<Text>();
+            if (currentText != null)
+            {
+                currentText.enabled = true;
+            }
         }
     }
 

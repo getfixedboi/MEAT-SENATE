@@ -1,8 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using System.Collections;
-using System.Collections.Generic;
 
 public class ShowItemDescOnUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
@@ -10,12 +8,13 @@ public class ShowItemDescOnUI : MonoBehaviour, IPointerEnterHandler, IPointerExi
     public GameObject prefabToShow;  // Префаб, который будет появляться 
     public GameObject instantiatedPrefab;
     public Canvas Canvas;  // Убедитесь, что это ваш Canvas
-
-    public Vector3 offset;  // Смещение префаба относительно курсора
-
     public static GameObject prefab;
 
-    public void Start()
+    [Space]
+    [Range(-100, 100)] public float offsetXPercent; // Офсет по X в процентах
+    [Range(-100, 100)] public float offsetYPercent; // Офсет по Y в процентах
+
+    private void Start()
     {
         GetComponent<Image>().sprite = ItemRef.GetSprite();
     }
@@ -28,14 +27,7 @@ public class ShowItemDescOnUI : MonoBehaviour, IPointerEnterHandler, IPointerExi
         // Создаем префаб и позиционируем его с учетом смещения
         instantiatedPrefab = Instantiate(prefabToShow, Canvas.transform);
 
-        Vector3 worldPoint;
-        RectTransformUtility.ScreenPointToWorldPointInRectangle(
-            Canvas.GetComponent<RectTransform>(),
-            Input.mousePosition,
-            Canvas.worldCamera,
-            out worldPoint
-        );
-        instantiatedPrefab.transform.position = worldPoint + offset;
+        PositionPrefab(instantiatedPrefab);
         prefab = instantiatedPrefab;
     }
 
@@ -64,20 +56,34 @@ public class ShowItemDescOnUI : MonoBehaviour, IPointerEnterHandler, IPointerExi
         }
     }
 
-    void Update()
+    private void Update()
     {
         // Обновляем позицию префаба с учетом смещения
         if (instantiatedPrefab != null)
         {
-            Vector3 worldPoint;
-            RectTransformUtility.ScreenPointToWorldPointInRectangle(
-                Canvas.GetComponent<RectTransform>(),
-                Input.mousePosition,
-                Canvas.worldCamera,
-                out worldPoint
-            );
-            instantiatedPrefab.transform.position = worldPoint + offset;
+            PositionPrefab(instantiatedPrefab);
         }
+    }
+
+    private void PositionPrefab(GameObject prefab)
+    {
+        // Получаем размеры экрана
+        float screenWidth = Screen.width;
+        float screenHeight = Screen.height;
+
+        // Вычисляем офсет на основе разрешения экрана
+        float offsetX = (offsetXPercent / 100f) * screenWidth;
+        float offsetY = (offsetYPercent / 100f) * screenHeight;
+
+        Vector3 worldPoint;
+        RectTransformUtility.ScreenPointToWorldPointInRectangle(
+            Canvas.GetComponent<RectTransform>(),
+            Input.mousePosition,
+            Canvas.worldCamera,
+            out worldPoint
+        );
+
+        prefab.transform.position = worldPoint + new Vector3(offsetX, offsetY, 0);
     }
 
     private void OnDestroy()

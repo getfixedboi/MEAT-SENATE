@@ -89,9 +89,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c5fb45ae1ca6e14eb3e38b26d85fcdd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ItemRef: {fileID: 0}
   prefabToShow: {fileID: 3876044135576106291, guid: 3021094c43c55db49b622b8149df2b81, type: 3}
+  instantiatedPrefab: {fileID: 0}
   Canvas: {fileID: 0}
-  offset: {x: 200, y: -200, z: 0}
+  offsetXPercent: 12
+  offsetYPercent: -12
 --- !u!82 &-2056128773777318713
 AudioSource:
   m_ObjectHideFlags: 0

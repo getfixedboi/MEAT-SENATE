@@ -9,15 +9,15 @@ public class BisonSteak : ItemBehaviour
     }
     public override void GetEffect()
     {
-        playerStats.MaxHP += 20;
+        playerStats.maxHP += 20;
     }
 
     public override void LoseEffect()
     {
-        playerStats.MaxHP -= 20;
-        if (playerStats.СurrentHP > playerStats.MaxHP)
+        playerStats.maxHP -= 20;
+        if (playerStats.СurrentHP > playerStats.maxHP)
         {
-            playerStats.СurrentHP = playerStats.MaxHP;
+            playerStats.СurrentHP = playerStats.maxHP;
         }
     }
 
