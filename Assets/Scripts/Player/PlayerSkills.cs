@@ -37,7 +37,7 @@ public class PlayerSkills : MonoBehaviour
     }
     private void Update()
     {
-        if(PauseMenu.IsPaused) return;
+        if (PauseMenu.IsPaused) return;
         _meatPieceCountOutput.text = MeatPieceCount.ToString() + "/" + _meatPieceReqiureCount.ToString();
         _nextSkillUseTime -= Time.deltaTime;
 
@@ -45,10 +45,10 @@ public class PlayerSkills : MonoBehaviour
         {
             if (Input.GetButton("Fire1"))
             {
-                if (!InteractRaycaster.InTabMode)
-                {
-                    ShootProjectiles();
-                }
+                if (Grabbable.LockShooting) { return; }
+                if (InteractRaycaster.InTabMode) { return; }
+
+                ShootProjectiles();
             }
         }
 

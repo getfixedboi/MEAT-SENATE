@@ -16,15 +16,21 @@ public class InteractRaycaster : MonoBehaviour
     [SerializeField] private UnityEngine.UI.Image _defaultBG;
     public static bool InTabMode = false;
     private bool _canInteracted = true;
+
+    // Переменная для хранения последнего интерактивного объекта
+    private Interactable _lastInteractable;
+
     private void Awake()
     {
         InTabMode = false;
         _mainCamera = this.gameObject;
     }
+
     private void Start()
     {
         TabBG.gameObject.SetActive(false);
     }
+
     private void Update()
     {
         if (PauseMenu.IsPaused)
@@ -32,6 +38,7 @@ public class InteractRaycaster : MonoBehaviour
             DisabledTabMode();
             return;
         }
+        
         if (Input.GetKey(KeyCode.Tab))
         {
             EnabledTabMode();
@@ -41,46 +48,60 @@ public class InteractRaycaster : MonoBehaviour
             DisabledTabMode();
         }
 
+        // Проверка луча
         if (Physics.Raycast(_mainCamera.transform.position, _mainCamera.transform.forward, out _hit, _interactDistance))
         {
             _currentHit = _hit.collider.gameObject;
             _interactable = _currentHit.GetComponent<Interactable>();
-
+            
             if (_interactable != null)
             {
-                if (_interactable.IsLastInteracted)
+                // Сохраняем ссылку на последний интерактивный объект
+                if (_lastInteractable != _interactable)
                 {
-                    _interactable = null;
-                }
-                else
-                {
-                    _interactable.OnFocus();
+                    // Если это новый объект, вызываем OnFocus
+                    _lastInteractable?.OnLoseFocus(); // Вызываем OnLoseFocus для предыдущего объекта
+                    _interactable.OnFocus(); // Вызываем OnFocus для нового объекта
                     _guideText.text = _interactable.InteractText;
 
-                    if (Input.GetKeyDown(KeyCode.E))
+                    // Обновляем ссылку на последний интерактивный объект
+                    _lastInteractable = _interactable;
+                }
+
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    if (_canInteracted)
                     {
-                        if (_canInteracted)
-                        {
-                            StartCoroutine(C_InteractCooldown());
-                            _interactable.OnInteract();
-                        }
+                        StartCoroutine(C_InteractCooldown());
+                        _interactable.OnInteract();
                     }
                 }
             }
             else
             {
-                _guideText.text = "";
-                _interactable?.OnLoseFocus();
-                _interactable = null;
+                // Если интерактивный объект не найден, сбрасываем текст и вызываем OnLoseFocus
+                ResetInteraction();
             }
         }
         else
         {
-            _guideText.text = "";
-            _interactable?.OnLoseFocus();
-            _interactable = null;
+            // Если луч не попадает ни в один объект, сбрасываем взаимодействие
+            ResetInteraction();
         }
     }
+
+    private void ResetInteraction()
+    {
+        if (_lastInteractable != null)
+        {
+            // Вызываем OnLoseFocus для последнего интерактивного объекта
+            _lastInteractable.OnLoseFocus();
+            _lastInteractable = null; // Сбрасываем ссылку на последний интерактивный объект
+        }
+
+        _guideText.text = ""; // Сбрасываем текст подсказки
+    }
+
     private void EnabledTabMode()
     {
         if (!MeatBeggar.IsShopping || !PauseMenu.IsPaused)
@@ -92,6 +113,7 @@ public class InteractRaycaster : MonoBehaviour
             _defaultBG.color = new Color(tempColor.r, tempColor.g, tempColor.b, 0.314f);
         }
     }
+
     private void DisabledTabMode()
     {
         InTabMode = false;

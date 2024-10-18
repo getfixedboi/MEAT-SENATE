@@ -44,9 +44,11 @@ public class PlayerStatictics : MonoBehaviour
     public static ShowModifierDescOnUI CurrentModifier;
     public GameObject ItemGrid;
     public GameObject ModGrid;
+    public static GameObject Instance;
 
     private void Awake()
     {
+        Instance = this.gameObject;
         _playerItems = new HashSet<ItemBehaviour>();
         _playerModifiers = new HashSet<ModifierBehaviour>();
         СurrentHP = MaxHP;

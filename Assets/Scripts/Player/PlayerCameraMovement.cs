@@ -36,7 +36,11 @@ public class PlayerCameraMovement : MonoBehaviour
             _mouseSensitivity = value / _sliderMultiplier;
         }
     }
-
+    public static GameObject Instance;
+    private void Awake()
+    {
+        Instance = this.gameObject;
+    }
     private void Start()
     {
         _defaultPosY = transform.localPosition.y;
@@ -45,7 +49,8 @@ public class PlayerCameraMovement : MonoBehaviour
 
     private void Update()
     {
-        if(InteractRaycaster.InTabMode){
+        if (InteractRaycaster.InTabMode)
+        {
             // добавить хуй 2 
             return;
         }

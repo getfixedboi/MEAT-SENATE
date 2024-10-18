@@ -3,6 +3,7 @@ using System.Collections;
 using System;
 
 [RequireComponent(typeof(AudioSource))]
+[RequireComponent(typeof(Collider))]
 public abstract class Interactable : MonoBehaviour
 {
     [HideInInspector] public string InteractText;
