@@ -16,8 +16,10 @@ public class InteractRaycaster : MonoBehaviour
     [SerializeField] private UnityEngine.UI.Image _defaultBG;
     public static bool InTabMode = false;
     private bool _canInteracted = true;
+    [Header("Cursor ref")][SerializeField] private Image _crosshair;
+    [SerializeField] private Sprite _cursorEnabled;
+    [SerializeField] private Sprite _cursorDisabled;
 
-    // Переменная для хранения последнего интерактивного объекта
     private Interactable _lastInteractable;
 
     private void Awake()
@@ -38,7 +40,7 @@ public class InteractRaycaster : MonoBehaviour
             DisabledTabMode();
             return;
         }
-        
+
         if (Input.GetKey(KeyCode.Tab))
         {
             EnabledTabMode();
@@ -53,24 +55,23 @@ public class InteractRaycaster : MonoBehaviour
         {
             _currentHit = _hit.collider.gameObject;
             _interactable = _currentHit.GetComponent<Interactable>();
-            
+
             if (_interactable != null)
             {
-                // Сохраняем ссылку на последний интерактивный объект
                 if (_lastInteractable != _interactable)
                 {
-                    // Если это новый объект, вызываем OnFocus
-                    _lastInteractable?.OnLoseFocus(); // Вызываем OnLoseFocus для предыдущего объекта
-                    _interactable.OnFocus(); // Вызываем OnFocus для нового объекта
-                    _guideText.text = _interactable.InteractText;
-
-                    // Обновляем ссылку на последний интерактивный объект
+                    _lastInteractable?.OnLoseFocus();
+                    CheckInteraction();
                     _lastInteractable = _interactable;
+                }
+                else
+                {
+                    CheckInteraction();
                 }
 
                 if (Input.GetKeyDown(KeyCode.E))
                 {
-                    if (_canInteracted)
+                    if (_canInteracted && !_interactable.IsLastInteracted)
                     {
                         StartCoroutine(C_InteractCooldown());
                         _interactable.OnInteract();
@@ -79,24 +80,36 @@ public class InteractRaycaster : MonoBehaviour
             }
             else
             {
-                // Если интерактивный объект не найден, сбрасываем текст и вызываем OnLoseFocus
                 ResetInteraction();
             }
         }
         else
         {
-            // Если луч не попадает ни в один объект, сбрасываем взаимодействие
             ResetInteraction();
         }
     }
-
+    private void CheckInteraction()
+    {
+        if (!_interactable.IsLastInteracted)
+        {
+            _interactable.OnFocus();
+            _crosshair.sprite = _cursorEnabled;
+            _guideText.text = _interactable.InteractText;
+        }
+        else
+        {
+            _interactable.OnLoseFocus();
+            _crosshair.sprite = _cursorDisabled;
+            _guideText.text = "";
+        }
+    }
     private void ResetInteraction()
     {
         if (_lastInteractable != null)
         {
-            // Вызываем OnLoseFocus для последнего интерактивного объекта
             _lastInteractable.OnLoseFocus();
-            _lastInteractable = null; // Сбрасываем ссылку на последний интерактивный объект
+            _crosshair.sprite = _cursorDisabled;
+            _lastInteractable = null;
         }
 
         _guideText.text = ""; // Сбрасываем текст подсказки

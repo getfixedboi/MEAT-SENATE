@@ -20,6 +20,7 @@ public class ShopItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         if (eventData.button == PointerEventData.InputButton.Left && PlayerSkills.MeatPieceCount >= _itemCost)
         {
+            MeatBeggar.Instance.GetComponent<MeatBeggar>().MeatDeals++;
             PlayerSkills.MeatPieceCount -= _itemCost;
             MeatCounterText.text = PlayerSkills.MeatPieceCount.ToString();
             GameObject obj = GameObject.Instantiate(ItemRef.gameObject, GameObject.FindWithTag("Player").transform.forward, new Quaternion());

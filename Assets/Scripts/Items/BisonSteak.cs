@@ -19,7 +19,7 @@ public class BisonSteak : ItemBehaviour
         {
             playerStats.СurrentHP = playerStats.maxHP;
         }
-        playerStats.maxHP -= 0;//папина гордость, мамина радость
+        playerStats.maxHP -= 0;//папина гордость, мамина радость(активация свойства)
     }
 
     public override void SetDesc()

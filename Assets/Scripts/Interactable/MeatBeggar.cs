@@ -13,10 +13,29 @@ public class MeatBeggar : Interactable
     private PlayerCameraMovement _playerCameraComponent;
     private PlayerSkills _playerSkillsComponent;
     public static bool IsShopping = false;
+    [Space]
+    public static GameObject Instance;
+    public int meatDeals=0;
+    public int MeatDeals
+    {
+        get
+        {
+            return meatDeals;
+        }
+        set
+        {
+            meatDeals = value;
+            if(meatDeals==3)
+            {
+                IsLastInteracted = true;
+            }
+        }
+    }
     protected override void Awake()
     {
         base.Awake();
 
+        Instance = this.gameObject;
         IsShopping = false;
         _meatCounter.text = PlayerSkills.MeatPieceCount.ToString();
 
@@ -64,22 +83,6 @@ public class MeatBeggar : Interactable
 
     public override void OnLoseFocus()
     {
-        int buyedDeals = 0;
-        foreach (ShopItem obj in _shopDeals)
-        {
-            if (obj != null)
-            {
-                break;
-            }
-            else
-            {
-                buyedDeals++;
-            }
-        }
-        if (buyedDeals == 3)
-        {
-            IsLastInteracted = true;
-        }
         SwitchComponents(false);
         InteractText = "";
     }

@@ -47,7 +47,7 @@ public class PlayerCameraMovement : MonoBehaviour
         _origRotation = transform.rotation;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (InteractRaycaster.InTabMode)
         {
