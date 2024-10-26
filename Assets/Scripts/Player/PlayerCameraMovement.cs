@@ -43,7 +43,9 @@ public class PlayerCameraMovement : MonoBehaviour
     [SerializeField] private GameObject _hands;
     private float _handsDefaultPosY = 0;
     private Vector3 _handsDefaultLocalPos;
-    [SerializeField][Range(0.01f, 1f)] private float _handsSwayMultiplier;
+    [SerializeField] private float _handsSwayByCamera;
+    [SerializeField] private float _handsSwayByMov;
+    private bool _handSwayByMov = false;
     private void Awake()
     {
         Instance = this.gameObject;
@@ -61,9 +63,10 @@ public class PlayerCameraMovement : MonoBehaviour
     {
         if (InteractRaycaster.InTabMode)
         {
-            // добавить хуй 2 
+            //добавить хуй 2
             return;
         }
+
         HeadBod();
         _x = Input.GetAxisRaw("Horizontal");
         _y = Input.GetAxisRaw("Vertical");
@@ -71,12 +74,20 @@ public class PlayerCameraMovement : MonoBehaviour
         float y = Input.GetAxis("Mouse Y") * _mouseSensitivity * Time.deltaTime;
         _xRotation -= y;
         _xRotation = Mathf.Clamp(_xRotation, -70f, 70f);
-        transform.localRotation = Quaternion.Euler(_xRotation, 0f, _x);
+        transform.localRotation = Quaternion.Euler(_xRotation, 0f, 0f);
         _playerBody.Rotate(Vector3.up * x);
 
-        //_hands.transform.localPosition = _handsDefaultLocalPos + x * _hands.transform.right * Time.deltaTime * _handsSwayMultiplier;
-        //_hands.transform.localPosition = Vector3.Lerp(_handsDefaultLocalPos,_handsDefaultLocalPos + x * _hands.transform.right * Time.deltaTime * _handsSwayMultiplier,Time.deltaTime);
+        if (_handSwayByMov) { return; }
+
+        Vector3 targetPosition = _handsDefaultLocalPos;
+        if (x != 0)
+        {
+            targetPosition += x * _hands.transform.right * _handsSwayByCamera;
+        }
+        _hands.transform.localPosition = Vector3.Lerp(_hands.transform.localPosition, targetPosition, Time.deltaTime * 5f);
+
     }
+
 
     private void HeadBod()
     {
@@ -85,9 +96,18 @@ public class PlayerCameraMovement : MonoBehaviour
             _timer += Time.deltaTime * _walkingBobbingSpeed;
             transform.localPosition = new Vector3(transform.localPosition.x, _defaultPosY + Mathf.Sin(_timer) * _bobbingAmount, transform.localPosition.z);
             _hands.transform.localPosition = new Vector3(_hands.transform.localPosition.x, _handsDefaultPosY + (1 - Mathf.Cos(_timer)) * _bobbingAmount, _hands.transform.localPosition.z);
+
+            _handSwayByMov = true;
+            Vector3 targetPosition = _handsDefaultLocalPos;
+            if (_x != 0)
+            {
+                targetPosition += -_x * _hands.transform.right * _handsSwayByMov;
+            }
+            _hands.transform.localPosition = Vector3.Lerp(_hands.transform.localPosition, targetPosition, Time.deltaTime * 5f);
         }
         else
         {
+            _handSwayByMov = false;
             _timer = 0;
             transform.localPosition = Vector3.Lerp(transform.localPosition, new Vector3(transform.localPosition.x, _defaultPosY, transform.localPosition.z), Time.deltaTime * _walkingBobbingSpeed);
             transform.rotation = Quaternion.Lerp(transform.rotation, _origRotation, Time.deltaTime * _walkingBobbingSpeed);

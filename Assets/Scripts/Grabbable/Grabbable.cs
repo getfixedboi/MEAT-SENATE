@@ -92,7 +92,7 @@ public class Grabbable : Interactable
     {
         gameObject.transform.SetParent(null);
         // Определяем расстояние, на которое выкинем объект
-        float throwDistance = 3f; // Вы можете изменить это значение по своему усмотрению
+        float throwDistance = 6f; // Вы можете изменить это значение по своему усмотрению
 
         // Вычисляем направление броска
         Vector3 throwDirection = PlayerCameraMovement.Instance.transform.forward;
