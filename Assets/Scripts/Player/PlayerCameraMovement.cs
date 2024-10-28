@@ -41,11 +41,9 @@ public class PlayerCameraMovement : MonoBehaviour
 
     [Header("Weapon sway params")]
     [SerializeField] private GameObject _hands;
-    private float _handsDefaultPosY = 0;
-    private Vector3 _handsDefaultLocalPos;
-    [SerializeField] private float _handsSwayByCamera;
-    [SerializeField] private float _handsSwayByMov;
-    private bool _handSwayByMov = false;
+    [SerializeField] private float _handsSwayMul;
+    [SerializeField] private float _handsSwaySmooth;
+    private float _handsDefaultPosY;
     private void Awake()
     {
         Instance = this.gameObject;
@@ -56,14 +54,13 @@ public class PlayerCameraMovement : MonoBehaviour
         _origRotation = transform.rotation;
 
         _handsDefaultPosY = _hands.transform.localPosition.y;
-        _handsDefaultLocalPos = _hands.transform.localPosition;
+
     }
 
     private void FixedUpdate()
     {
         if (InteractRaycaster.InTabMode)
         {
-            //добавить хуй 2
             return;
         }
 
@@ -77,17 +74,22 @@ public class PlayerCameraMovement : MonoBehaviour
         transform.localRotation = Quaternion.Euler(_xRotation, 0f, 0f);
         _playerBody.Rotate(Vector3.up * x);
 
-        if (_handSwayByMov) { return; }
-
-        Vector3 targetPosition = _handsDefaultLocalPos;
-        if (x != 0)
-        {
-            targetPosition += x * _hands.transform.right * _handsSwayByCamera;
-        }
-        _hands.transform.localPosition = Vector3.Lerp(_hands.transform.localPosition, targetPosition, Time.deltaTime * 5f);
-
+        WeaponSway();
     }
 
+    private void WeaponSway()
+    {
+        float mouseX = Input.GetAxisRaw("Mouse X") * _handsSwayMul;
+        float mouseY = Input.GetAxisRaw("Mouse Y") * _handsSwayMul;
+
+        Quaternion rotationX = Quaternion.AngleAxis(-mouseY, Vector3.right);
+        Quaternion rotationY = Quaternion.AngleAxis(mouseX, Vector3.up);
+        Quaternion rotationZ = Quaternion.AngleAxis(-mouseX * 0.5f, Vector3.forward);
+
+        Quaternion targetRotation = rotationX * rotationY * rotationZ;
+
+        _hands.transform.localRotation = Quaternion.Slerp(_hands.transform.localRotation, targetRotation, _handsSwaySmooth * Time.deltaTime);
+    }
 
     private void HeadBod()
     {
@@ -96,23 +98,13 @@ public class PlayerCameraMovement : MonoBehaviour
             _timer += Time.deltaTime * _walkingBobbingSpeed;
             transform.localPosition = new Vector3(transform.localPosition.x, _defaultPosY + Mathf.Sin(_timer) * _bobbingAmount, transform.localPosition.z);
             _hands.transform.localPosition = new Vector3(_hands.transform.localPosition.x, _handsDefaultPosY + (1 - Mathf.Cos(_timer)) * _bobbingAmount, _hands.transform.localPosition.z);
-
-            _handSwayByMov = true;
-            Vector3 targetPosition = _handsDefaultLocalPos;
-            if (_x != 0)
-            {
-                targetPosition += -_x * _hands.transform.right * _handsSwayByMov;
-            }
-            _hands.transform.localPosition = Vector3.Lerp(_hands.transform.localPosition, targetPosition, Time.deltaTime * 5f);
         }
         else
         {
-            _handSwayByMov = false;
             _timer = 0;
             transform.localPosition = Vector3.Lerp(transform.localPosition, new Vector3(transform.localPosition.x, _defaultPosY, transform.localPosition.z), Time.deltaTime * _walkingBobbingSpeed);
             transform.rotation = Quaternion.Lerp(transform.rotation, _origRotation, Time.deltaTime * _walkingBobbingSpeed);
             _hands.transform.localPosition = Vector3.Lerp(_hands.transform.localPosition, new Vector3(_hands.transform.localPosition.x, _handsDefaultPosY, _hands.transform.localPosition.z), Time.deltaTime * _walkingBobbingSpeed);
         }
     }
-
 }

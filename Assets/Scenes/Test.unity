@@ -4418,8 +4418,8 @@ MonoBehaviour:
   _walkingBobbingSpeed: 10
   _bobbingAmount: 0.05
   _hands: {fileID: 653188796}
-  _handsSwayByCamera: 0.1
-  _handsSwayByMov: 0.15
+  _handsSwayMul: 10
+  _handsSwaySmooth: 10
 --- !u!54 &963194231
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4997,7 +4997,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1072846652
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8951,7 +8951,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &2024148064
 MonoBehaviour:
   m_ObjectHideFlags: 0
