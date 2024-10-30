@@ -75,7 +75,7 @@ public class PlayerProgress : MonoBehaviour
 
     private void Awake()
     {
-        _playerStats = GameObject.FindWithTag("Player").GetComponent<PlayerStatictics>();
+        _playerStats = GameObject.FindWithTag("Player").GetComponent<PlayerStatictics>(); // бля сам ты тупл
 
         _lowTierBuffs.Add(new Tuple<string, Action>("+5 мясных кусочков", () => PlayerSkills.MeatPieceCount += 5));
 
