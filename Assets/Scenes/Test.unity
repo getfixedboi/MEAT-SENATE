@@ -4419,7 +4419,7 @@ MonoBehaviour:
   _bobbingAmount: 0.05
   _hands: {fileID: 653188796}
   _handsSwayMul: 10
-  _handsSwaySmooth: 10
+  _handsSwaySmooth: 13
 --- !u!54 &963194231
 Rigidbody:
   m_ObjectHideFlags: 0

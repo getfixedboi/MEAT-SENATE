@@ -44,6 +44,8 @@ public class PlayerCameraMovement : MonoBehaviour
     [SerializeField] private float _handsSwayMul;
     [SerializeField] private float _handsSwaySmooth;
     private float _handsDefaultPosY;
+    private bool IsBobbing = false;
+    private Quaternion _targetRotation;
     private void Awake()
     {
         Instance = this.gameObject;
@@ -82,25 +84,30 @@ public class PlayerCameraMovement : MonoBehaviour
         float mouseX = Input.GetAxisRaw("Mouse X") * _handsSwayMul;
         float mouseY = Input.GetAxisRaw("Mouse Y") * _handsSwayMul;
 
-        Quaternion rotationX = Quaternion.AngleAxis(-mouseY, Vector3.right);
+        //Debug.Log($"mouse x {mouseY}");
+        //Debug.Log($"mov x {-_y}");
+
+        Quaternion rotationX = IsBobbing ? Quaternion.AngleAxis(_y * 18f, Vector3.right) : Quaternion.AngleAxis(-mouseY, Vector3.right);
         Quaternion rotationY = Quaternion.AngleAxis(mouseX, Vector3.up);
-        Quaternion rotationZ = Quaternion.AngleAxis(-mouseX * 0.5f, Vector3.forward);
+        Quaternion rotationZ = IsBobbing ? Quaternion.AngleAxis(-_x * 10f, Vector3.forward) : Quaternion.AngleAxis(-mouseX * 0.9f, Vector3.forward);
 
-        Quaternion targetRotation = rotationX * rotationY * rotationZ;
+        _targetRotation = rotationX * rotationY * rotationZ;
 
-        _hands.transform.localRotation = Quaternion.Slerp(_hands.transform.localRotation, targetRotation, _handsSwaySmooth * Time.deltaTime);
+        _hands.transform.localRotation = Quaternion.Slerp(_hands.transform.localRotation, _targetRotation, _handsSwaySmooth * Time.deltaTime);
     }
 
     private void HeadBod()
     {
         if (_x != 0 || _y != 0)
         {
+            IsBobbing = true;
             _timer += Time.deltaTime * _walkingBobbingSpeed;
             transform.localPosition = new Vector3(transform.localPosition.x, _defaultPosY + Mathf.Sin(_timer) * _bobbingAmount, transform.localPosition.z);
             _hands.transform.localPosition = new Vector3(_hands.transform.localPosition.x, _handsDefaultPosY + (1 - Mathf.Cos(_timer)) * _bobbingAmount, _hands.transform.localPosition.z);
         }
         else
         {
+            IsBobbing = false;
             _timer = 0;
             transform.localPosition = Vector3.Lerp(transform.localPosition, new Vector3(transform.localPosition.x, _defaultPosY, transform.localPosition.z), Time.deltaTime * _walkingBobbingSpeed);
             transform.rotation = Quaternion.Lerp(transform.rotation, _origRotation, Time.deltaTime * _walkingBobbingSpeed);
