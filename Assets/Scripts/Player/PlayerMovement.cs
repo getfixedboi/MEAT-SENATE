@@ -1,20 +1,26 @@
 using UnityEngine;
+
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour
-{   
+{
     [HideInInspector]
     public Vector3 MoveInput;
     [HideInInspector]
     public CharacterController Character;
-
 
     [Header("Variables")]
     [SerializeField]
     private float _speed;
     [SerializeField]
     private float _gravity;
-
-    private Vector3 _velocity;
+    [SerializeField]
+    private float _jumpHeight;
+    [SerializeField]
+    private LayerMask groundLayer;
+    [SerializeField]
+    private float groundCheckDistance = 0.1f;
+    public static Vector3 Velocity;
+    public static bool IsGrounded = false;
 
     private void Awake()
     {
@@ -24,30 +30,43 @@ public class PlayerMovement : MonoBehaviour
     private void Update()
     {
         if (PauseMenu.IsPaused) return;
+
         float axis = Input.GetAxis("Horizontal");
         float axis2 = Input.GetAxis("Vertical");
         MoveInput = new Vector3(axis, 0f, axis2);
         MoveInput.Normalize();
-        Vector3 vector2 = transform.right * axis + transform.forward * axis2;
-        vector2 = Vector3.ClampMagnitude(vector2, 1f);
+
+        Vector3 direction = transform.right * axis + transform.forward * axis2;
+        direction = Vector3.ClampMagnitude(direction, 1f);
+
         if (Input.GetButton("Horizontal") || Input.GetButton("Vertical"))
         {
-            Character.Move(vector2 * _speed * Time.deltaTime);
-           
+            Character.Move(direction * _speed * Time.deltaTime);
         }
         else
         {
             MoveInput = Vector3.zero;
-            Character.Move(Vector3.zero * _speed * Time.deltaTime);
+            Character.Move(Vector3.zero * Time.deltaTime);
         }
 
-        if(Character.isGrounded){
-             _velocity.y = 0;
-            Character.Move(_velocity * Time.deltaTime);
+        IsGrounded = Physics.Raycast(transform.position, Vector3.down, groundCheckDistance, groundLayer);
+
+        if (IsGrounded)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                Velocity.y = Mathf.Sqrt(_jumpHeight * -2f * _gravity);
+            }
+            else
+            {
+                Velocity.y = 0;
+            }
         }
-        else{
-             _velocity.y = _velocity.y + _gravity * Time.deltaTime;
-            Character.Move(_velocity * Time.deltaTime);
+        else
+        {
+            Velocity.y += _gravity * Time.deltaTime;
         }
+
+        Character.Move(Velocity * Time.deltaTime);
     }
 }

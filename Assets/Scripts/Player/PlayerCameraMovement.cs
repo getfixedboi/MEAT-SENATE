@@ -45,7 +45,11 @@ public class PlayerCameraMovement : MonoBehaviour
     [SerializeField] private float _handsSwaySmooth;
     private float _handsDefaultPosY;
     private bool IsBobbing = false;
+    private bool IsBlockedByWall = false;
     private Quaternion _targetRotation;
+    private Quaternion _rotationX;
+    private Quaternion _rotationY;
+    private Quaternion _rotationZ;
     private void Awake()
     {
         Instance = this.gameObject;
@@ -56,7 +60,6 @@ public class PlayerCameraMovement : MonoBehaviour
         _origRotation = transform.rotation;
 
         _handsDefaultPosY = _hands.transform.localPosition.y;
-
     }
 
     private void FixedUpdate()
@@ -84,14 +87,28 @@ public class PlayerCameraMovement : MonoBehaviour
         float mouseX = Input.GetAxisRaw("Mouse X") * _handsSwayMul;
         float mouseY = Input.GetAxisRaw("Mouse Y") * _handsSwayMul;
 
-        //Debug.Log($"mouse x {mouseY}");
-        //Debug.Log($"mov x {-_y}");
+        _rotationY = Quaternion.AngleAxis(mouseX, Vector3.up);
+        if (IsBlockedByWall)
+        {
+            _rotationX = Quaternion.AngleAxis(-60f, Vector3.right);
+        }
+        else if (!PlayerMovement.IsGrounded)
+        {
+            _rotationX = Quaternion.AngleAxis(PlayerMovement.Velocity.y * 12f, Vector3.right);
+            _rotationZ = Quaternion.AngleAxis(-mouseX * 0.3f, Vector3.forward);
+        }
+        else if (IsBobbing)
+        {
+            _rotationX = Quaternion.AngleAxis(_y * 18f, Vector3.right);
+            _rotationZ = Quaternion.AngleAxis(-_x * 10f, Vector3.forward);
+        }
+        else
+        {
+            _rotationX = Quaternion.AngleAxis(-mouseY, Vector3.right);
+            _rotationZ = Quaternion.AngleAxis(-mouseX * 0.9f, Vector3.forward);
+        }
 
-        Quaternion rotationX = IsBobbing ? Quaternion.AngleAxis(_y * 18f, Vector3.right) : Quaternion.AngleAxis(-mouseY, Vector3.right);
-        Quaternion rotationY = Quaternion.AngleAxis(mouseX, Vector3.up);
-        Quaternion rotationZ = IsBobbing ? Quaternion.AngleAxis(-_x * 10f, Vector3.forward) : Quaternion.AngleAxis(-mouseX * 0.9f, Vector3.forward);
-
-        _targetRotation = rotationX * rotationY * rotationZ;
+        _targetRotation = _rotationX * _rotationY * _rotationZ;
 
         _hands.transform.localRotation = Quaternion.Slerp(_hands.transform.localRotation, _targetRotation, _handsSwaySmooth * Time.deltaTime);
     }
@@ -113,5 +130,16 @@ public class PlayerCameraMovement : MonoBehaviour
             transform.rotation = Quaternion.Lerp(transform.rotation, _origRotation, Time.deltaTime * _walkingBobbingSpeed);
             _hands.transform.localPosition = Vector3.Lerp(_hands.transform.localPosition, new Vector3(_hands.transform.localPosition.x, _handsDefaultPosY, _hands.transform.localPosition.z), Time.deltaTime * _walkingBobbingSpeed);
         }
+    }
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Wall"))
+        {
+            IsBlockedByWall = true;
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        IsBlockedByWall = false;
     }
 }
