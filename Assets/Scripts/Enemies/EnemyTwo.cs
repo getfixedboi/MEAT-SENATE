@@ -13,7 +13,7 @@ public class EnemyTwo : EnemyBehaviour
     #endregion
     protected override void Awake()
     {
-        maxHP = 2;
+        maxHP = 200;
         base.Awake();
         agent.stoppingDistance = rangeList[1];
     }

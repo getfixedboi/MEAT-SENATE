@@ -25,6 +25,7 @@ public abstract class EnemyBehaviour : MonoBehaviour
     protected bool isDead;
     protected float timer;
     protected float totalCooldownTimer;
+    public int SpawnCost;
     #endregion
     
     #region components
