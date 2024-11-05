@@ -94,7 +94,7 @@ public class PlayerCameraMovement : MonoBehaviour
         }
         else if (!PlayerMovement.IsGrounded)
         {
-            _rotationX = Quaternion.AngleAxis(PlayerMovement.Velocity.y * 12f, Vector3.right);
+            _rotationX = Quaternion.AngleAxis(PlayerMovement.Velocity.y * 10f, Vector3.right);
             _rotationZ = Quaternion.AngleAxis(-mouseX * 0.3f, Vector3.forward);
         }
         else if (IsBobbing)
@@ -133,8 +133,10 @@ public class PlayerCameraMovement : MonoBehaviour
     }
     private void OnTriggerStay(Collider other)
     {
+        Debug.Log("triggered");
         if (other.CompareTag("Wall"))
         {
+            Debug.Log("wall");
             IsBlockedByWall = true;
         }
     }
