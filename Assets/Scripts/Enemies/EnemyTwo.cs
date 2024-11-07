@@ -13,7 +13,6 @@ public class EnemyTwo : EnemyBehaviour
     #endregion
     protected override void Awake()
     {
-        maxHP = 200;
         base.Awake();
         agent.stoppingDistance = rangeList[1];
     }
@@ -22,13 +21,13 @@ public class EnemyTwo : EnemyBehaviour
     {
         base.Update();
 
-        if (distanceToPlayer >= rangeList[0])
+        if (DistanceToPlayer >= rangeList[0])
         {
             agent.speed = movSpeedList[0];
             agent.SetDestination(transform.position);
             agent.updateRotation = true;
         }
-        else if (distanceToPlayer <= rangeList[0] && distanceToPlayer >= rangeList[1])
+        else if (DistanceToPlayer <= rangeList[0] && DistanceToPlayer >= rangeList[1])
         {
             agent.speed = movSpeedList[0];
             agent.SetDestination(target.position);
@@ -54,7 +53,7 @@ public class EnemyTwo : EnemyBehaviour
         totalCooldownTimer = cooldownList[0];
 
         GameObject bullet = Instantiate(_projectile, transform.position, Quaternion.identity);
-        bullet.GetComponent<EnemyProjectile>().Damage = damageList[0];
+        bullet.GetComponent<EnemyProjectile>().Damage = damageList[0] * (InAura ? 2 : 1);
 
         Vector3 direction = (target.position - transform.position).normalized;
         bullet.GetComponent<Rigidbody>().velocity = direction * attackSpeedList[0];

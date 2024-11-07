@@ -133,7 +133,6 @@ public class PlayerCameraMovement : MonoBehaviour
     }
     private void OnTriggerStay(Collider other)
     {
-        Debug.Log("triggered");
         if (other.CompareTag("Wall"))
         {
             Debug.Log("wall");

@@ -14,8 +14,8 @@ using UnityEngine.VFX;
 public abstract class EnemyBehaviour : MonoBehaviour
 {
     #region stats
-    [Min(1)] protected float maxHP;
-    [NonSerialized] protected float currentHP;
+    [SerializeField] [Min(1)] protected float maxHP;
+    protected float currentHP;
     [SerializeField] protected List<float> movSpeedList;
     [SerializeField] protected List<float> damageList;
     [SerializeField] protected List<float> attackSpeedList;
@@ -23,6 +23,7 @@ public abstract class EnemyBehaviour : MonoBehaviour
     [SerializeField] protected List<float> rangeList;
     [SerializeField] protected List<float> clipList;
     protected bool isDead;
+    public bool InAura=false;
     protected float timer;
     protected float totalCooldownTimer;
     public int SpawnCost;
@@ -36,8 +37,8 @@ public abstract class EnemyBehaviour : MonoBehaviour
     #endregion
     
     #region other
-    protected static Transform target;
-    protected static float distanceToPlayer;
+    protected Transform target;
+    public float DistanceToPlayer;
 
     private GameObject _meatPiece;
     private int _minRangePieceCount = 2;
@@ -49,7 +50,6 @@ public abstract class EnemyBehaviour : MonoBehaviour
     private bool _isRightSide = false;
     private Material _onDamageMaterial;
     private Material _defaultMateral;
-    private List<EnemyBehaviour> otherEnemies; // Список других врагов
     #endregion
 
     protected virtual void Awake()
@@ -58,7 +58,7 @@ public abstract class EnemyBehaviour : MonoBehaviour
         _dmgCanv = Resources.Load<GameObject>("Prefabs/damageCanvas");
 
         _onDamageMaterial = Resources.Load<Material>("Materials/red");
-        _defaultMateral = Resources.Load<Material>("Materials/purple");
+        _defaultMateral = GetComponent<Renderer>().material;
 
         source = GetComponent<AudioSource>();
         animator = GetComponent<Animator>();
@@ -69,14 +69,11 @@ public abstract class EnemyBehaviour : MonoBehaviour
         isDead = false;
         agent.speed = movSpeedList[0];
         totalCooldownTimer = 0f;
-
-        // Инициализация списка врагов
-        otherEnemies = new List<EnemyBehaviour>(FindObjectsOfType<EnemyBehaviour>());
     }
 
     protected virtual void Update()
     {
-        distanceToPlayer = Vector3.Distance(gameObject.transform.position, target.transform.position);
+        DistanceToPlayer = Vector3.Distance(this.gameObject.transform.position, target.transform.position);
         totalCooldownTimer -= Time.deltaTime;
         timer += Time.deltaTime;
     }

@@ -4,19 +4,15 @@ using UnityEngine;
 
 public class EnemyOne : EnemyBehaviour
 {
-    protected override void Awake()
-    {
-        maxHP = 300;
-        base.Awake();
-    }
     protected override void Update()
     {
         base.Update();
-        if (distanceToPlayer >= rangeList[0])
+        Debug.Log(InAura);
+        if (DistanceToPlayer >= rangeList[0])
         {
             agent.SetDestination(gameObject.transform.position);
         }
-        else if (distanceToPlayer <= rangeList[0] && distanceToPlayer >= rangeList[1])
+        else if (DistanceToPlayer <= rangeList[0] && DistanceToPlayer >= rangeList[1])
         {
             agent.updateRotation = true;
             agent.SetDestination(target.position);
@@ -29,7 +25,7 @@ public class EnemyOne : EnemyBehaviour
                 agent.speed = movSpeedList[0];
             }
         }
-        else if (distanceToPlayer <= rangeList[1])
+        else if (DistanceToPlayer <= rangeList[1])
         {
             agent.updateRotation = false;
             agent.speed = 0;
@@ -58,13 +54,13 @@ public class EnemyOne : EnemyBehaviour
     {
         totalCooldownTimer = cooldownList[0];
         timer = 0;
-        target.gameObject.GetComponent<PlayerStatictics>().TakeDamage(damageList[0]);
+        target.gameObject.GetComponent<PlayerStatictics>().TakeDamage(damageList[0] * (InAura ? 2 : 1));
     }
     private void HeavyAttack()
     {
         totalCooldownTimer = cooldownList[1];
         timer = 0;
-        target.gameObject.GetComponent<PlayerStatictics>().TakeDamage(damageList[1]);
+        target.gameObject.GetComponent<PlayerStatictics>().TakeDamage(damageList[1] * (InAura ? 2 : 1));
     }
     private void SelfRotateTowardsTarget()
     {
