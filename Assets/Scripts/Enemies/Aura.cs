@@ -7,7 +7,7 @@ public class Aura : MonoBehaviour
     [SerializeField][Range(0f, 100f)] private float _damageBoost;
     private void FixedUpdate()
     {
-        transform.Rotate(0, 1, 2);
+        transform.Rotate(0.1f, 1, 0);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -28,7 +28,8 @@ public class Aura : MonoBehaviour
     }
     private void OnDestroy()
     {
-        Collider[] colliders = Physics.OverlapSphere(transform.position, transform.position.x/2);
+        float radius = GetComponent<SphereCollider>().radius * Mathf.Max(transform.lossyScale.x, transform.lossyScale.y, transform.lossyScale.z);
+        Collider[] colliders = Physics.OverlapSphere(transform.position, radius);
         foreach (var collider in colliders)
         {
             if (collider.TryGetComponent<EnemyBehaviour>(out EnemyBehaviour enemy))

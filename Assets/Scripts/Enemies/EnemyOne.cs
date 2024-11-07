@@ -7,7 +7,6 @@ public class EnemyOne : EnemyBehaviour
     protected override void Update()
     {
         base.Update();
-        Debug.Log(InAura);
         if (DistanceToPlayer >= rangeList[0])
         {
             agent.SetDestination(gameObject.transform.position);
