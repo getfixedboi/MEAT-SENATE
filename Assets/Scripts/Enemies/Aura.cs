@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 public class Aura : MonoBehaviour
 {
@@ -28,8 +29,14 @@ public class Aura : MonoBehaviour
     }
     private void OnDestroy()
     {
-        float radius = GetComponent<SphereCollider>().radius * Mathf.Max(transform.lossyScale.x, transform.lossyScale.y, transform.lossyScale.z);
-        Collider[] colliders = Physics.OverlapSphere(transform.position, radius);
+        Profiler.BeginSample("AuraDestroy");
+
+        Collider[] colliders = Physics.OverlapSphere(transform.position, 7.5f);
+        //фиксированное значение радиуса снижает время кадра на 24ms ахуеть юнити
+        //спасибо за этот ренат логан коричневого цвета 20 века
+
+        //GetComponent<SphereCollider>().radius и 
+        //Mathf.Max(transform.lossyScale.x, transform.lossyScale.y, transform.lossyScale.z) харам!
         foreach (var collider in colliders)
         {
             if (collider.TryGetComponent<EnemyBehaviour>(out EnemyBehaviour enemy))
@@ -37,6 +44,7 @@ public class Aura : MonoBehaviour
                 enemy.InAura = false;
             }
         }
-    }
 
+        Profiler.EndSample();
+    }
 }

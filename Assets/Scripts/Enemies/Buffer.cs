@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 public class Buffer : EnemyBehaviour
 {
@@ -32,23 +33,44 @@ public class Buffer : EnemyBehaviour
 
     private void SetTarget()
     {
-        List<EnemyOne> enemies = GameObject.FindObjectsOfType<EnemyOne>()?.ToList();
+        Profiler.BeginSample("SetBufferTarget");
+
+        List<EnemyBehaviour> enemies = new List<EnemyBehaviour>(GameObject.FindObjectsOfType<EnemyBehaviour>());
+
         if (enemies.Count > 0)
         {
-            float min = enemies.Min(e => e.DistanceToPlayer);
-            target = enemies.First(e => e.DistanceToPlayer == min).gameObject.transform;
+            EnemyOne closestEnemy = null;
+            float minDistance = float.MaxValue;
+
+            foreach (var enemy in enemies)
+            {
+                if (enemy is not EnemyOne) { continue; }
+
+                if (enemy.DistanceToPlayer < minDistance)
+                {
+                    minDistance = enemy.DistanceToPlayer;
+                    closestEnemy = enemy as EnemyOne;
+                }
+            }
+
+            if (closestEnemy != null)
+            {
+                target = closestEnemy.transform;
+                return;
+            }
         }
 
-        if (!target)
+        foreach (var enemy in enemies)
         {
-            try
+            if (enemy is not Buffer)
             {
-                target = GameObject.FindObjectsOfType<EnemyBehaviour>().Where(e => e is not Buffer).ToList().FirstOrDefault().gameObject.transform;
-            }
-            catch (NullReferenceException)
-            {
-                target = this.transform;
+                target = enemy.transform;
+                return;
             }
         }
+
+        target = this.transform;
+
+        Profiler.EndSample();
     }
 }
