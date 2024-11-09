@@ -56,7 +56,9 @@ public class Horde : MonoBehaviour
 
         int index = Random.Range(0, affordableEnemies.Count);
         EnemyBehaviour enemy = affordableEnemies[index];
-        Debug.Log(enemy.SpawnCost);
+        
+        //Debug.Log(enemy.SpawnCost);
+
         _hordeCost -= enemy.SpawnCost;
         return enemy;
     }
@@ -81,6 +83,7 @@ public class Horde : MonoBehaviour
             {
                 enemy.enabled = true;
             }
+            Destroy(this.gameObject);
         }
     }
 }
