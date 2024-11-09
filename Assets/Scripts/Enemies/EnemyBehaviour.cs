@@ -14,7 +14,7 @@ using UnityEngine.VFX;
 public abstract class EnemyBehaviour : MonoBehaviour
 {
     #region stats
-    [SerializeField] [Min(1)] protected float maxHP;
+    [SerializeField][Min(1)] protected float maxHP;
     protected float currentHP;
     [SerializeField] protected List<float> movSpeedList;
     [SerializeField] protected List<float> damageList;
@@ -22,23 +22,24 @@ public abstract class EnemyBehaviour : MonoBehaviour
     [SerializeField] protected List<float> cooldownList;
     [SerializeField] protected List<float> rangeList;
     [SerializeField] protected List<float> clipList;
-    protected bool isDead;
-    public bool InAura=false;
+    protected bool isDead = false;
+    [HideInInspector] public bool InAura = false;
     protected float timer;
     protected float totalCooldownTimer;
     public int SpawnCost;
     #endregion
-    
+
     #region components
     [SerializeField] protected List<VisualEffect> vfxList;
     protected AudioSource source;
     protected Animator animator;
     protected NavMeshAgent agent;
+    protected Rigidbody rb;
     #endregion
-    
+
     #region other
     protected Transform target;
-    public float DistanceToPlayer;
+    [HideInInspector] public float DistanceToPlayer;
 
     private GameObject _meatPiece;
     private int _minRangePieceCount = 2;
@@ -63,10 +64,10 @@ public abstract class EnemyBehaviour : MonoBehaviour
         source = GetComponent<AudioSource>();
         animator = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
+        rb = GetComponent<Rigidbody>();
 
         target = GameObject.FindWithTag("Player").transform;
         currentHP = maxHP;
-        isDead = false;
         agent.speed = movSpeedList[0];
         totalCooldownTimer = 0f;
     }
