@@ -20,7 +20,7 @@ GameObject:
   - component: {fileID: 9031704941767854298}
   m_Layer: 0
   m_Name: range 1
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -303,8 +303,10 @@ MonoBehaviour:
   - 50
   - 7
   clipList: []
+  InAura: 0
   SpawnCost: 2
   vfxList: []
+  DistanceToPlayer: 0
   _projectile: {fileID: 2660913204429129744, guid: aa88a6a641d81fb4d9a656ffeb0a5d46, type: 3}
 --- !u!208 &9031704941767854298
 NavMeshObstacle:

@@ -16,11 +16,11 @@ public class Suicide : EnemyBehaviour
     protected override void Update()
     {
         base.Update();
-        if (agent.isActiveAndEnabled )
+        if (agent.isActiveAndEnabled)
         {
             agent.SetDestination(target.position);
         }
-        else if(!_timeToPeak)
+        else if (!_timeToPeak)
         {
             transform.LookAt(target);
         }
@@ -59,7 +59,7 @@ public class Suicide : EnemyBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         if (!_hasJumped) { return; }
-        if (collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("Ground") || collision.gameObject.CompareTag("Wall"))
+        if (collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("Ground") || collision.gameObject.CompareTag("Wall") || collision.gameObject.CompareTag("Enemy"))
         {
             Explode();
         }
@@ -67,8 +67,8 @@ public class Suicide : EnemyBehaviour
 
     private void Explode()
     {
-        GameObject obj = GameObject.Instantiate(_explosion,transform.position,new Quaternion());
-        obj.GetComponent<Explosion>().Damage = damageList[0];
+        GameObject obj = GameObject.Instantiate(_explosion, transform.position, new Quaternion());
+        obj.GetComponent<Explosion>().Damage = damageList[0] * (InAura ? 2 : 1);
         Destroy(gameObject);
     }
 }

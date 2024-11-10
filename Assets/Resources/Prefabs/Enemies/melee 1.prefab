@@ -20,7 +20,7 @@ GameObject:
   - component: {fileID: 487714267341274296}
   m_Layer: 0
   m_Name: melee 1
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -304,8 +304,10 @@ MonoBehaviour:
   - 50
   - 2
   clipList: []
+  InAura: 0
   SpawnCost: 1
   vfxList: []
+  DistanceToPlayer: 0
 --- !u!208 &487714267341274296
 NavMeshObstacle:
   m_ObjectHideFlags: 0
