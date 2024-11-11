@@ -91,6 +91,7 @@ public class PlayerStatictics : MonoBehaviour
     #region items management
     public void AddItem(ItemBehaviour item)
     {
+        //Debugging("before add");
         if (!_playerItems.Contains(item))
         {
             TakeFromGroundItem(item.gameObject);
@@ -103,9 +104,11 @@ public class PlayerStatictics : MonoBehaviour
         {
             throw new ArgumentException($"Item {item.name} is already taken");
         }
+        //Debugging("after add");
     }
     public void AddItem(ItemBehaviour item, bool param)
     {
+        //Debugging("before add");
         if (!_playerItems.Contains(item))
         {
             if (param)
@@ -146,14 +149,17 @@ public class PlayerStatictics : MonoBehaviour
             }
             _playerItems.Add(item);
             AddItemUI(item);
+
         }
         else
         {
             throw new ArgumentException($"Item {item.name} is already taken");
         }
+        //Debugging("after add");
     }
     public void RemoveItem(ItemBehaviour item)
     {
+        //Debugging("before revome");
         if (_playerItems.Contains(item))
         {
             RemoveItemUI(item);
@@ -164,9 +170,11 @@ public class PlayerStatictics : MonoBehaviour
         {
             throw new ArgumentException($"Item {item.name} does not exists");
         }
+        //Debugging("after revome");
     }
     private void AddItemUI(ItemBehaviour item)
     {
+
         // Создаем новый экземпляр префаба
         GameObject gameObj = Instantiate(_itemImagePrefab, _playerCanvas.transform.position, Quaternion.identity);
 
@@ -189,7 +197,6 @@ public class PlayerStatictics : MonoBehaviour
     private void RemoveItemUI(ItemBehaviour item)
     {
         List<ItemBehaviour> list = _playerItems.ToList();
-        //Debug.Log(list.IndexOf(item));
 
         GameObject tempItem = _itemUiPrefabs[list.IndexOf(item)];
         _itemUiPrefabs.Remove(tempItem);
@@ -400,6 +407,15 @@ public class PlayerStatictics : MonoBehaviour
         if (item.TryGetComponent<Collider>(out Collider col))
         {
             col.enabled = true;
+        }
+    }
+
+    private void Debugging(string startMes)
+    {
+        Debug.Log(startMes);
+        foreach (var v in _playerItems)
+        {
+            Debug.LogWarning(v.name);
         }
     }
 }

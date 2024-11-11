@@ -62,7 +62,7 @@ public class PlayerCameraMovement : MonoBehaviour
         _handsDefaultPosY = _hands.transform.localPosition.y;
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         if (InteractRaycaster.InTabMode)
         {
@@ -94,7 +94,7 @@ public class PlayerCameraMovement : MonoBehaviour
         }
         else if (!PlayerMovement.IsGrounded)
         {
-            _rotationX = Quaternion.AngleAxis(PlayerMovement.Velocity.y * 10f, Vector3.right);
+            _rotationX = Quaternion.AngleAxis(Mathf.Clamp(PlayerMovement.Velocity.y, -5, 5) * 10f, Vector3.right);
             _rotationZ = Quaternion.AngleAxis(-mouseX * 0.3f, Vector3.forward);
         }
         else if (IsBobbing)

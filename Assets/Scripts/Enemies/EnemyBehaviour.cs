@@ -161,5 +161,6 @@ public abstract class EnemyBehaviour : MonoBehaviour
         dmgText.IsRightSide = _isRightSide;
 
         canvas.transform.localPosition = new Vector3(transform.position.x, transform.position.y + _ydmgCanvasOffset, transform.position.z);
+        //canvas.transform.position = new Vector3(transform.position.x, transform.position.y + _ydmgCanvasOffset, transform.position.z);
     }
 }
