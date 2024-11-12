@@ -135,7 +135,6 @@ public class PlayerCameraMovement : MonoBehaviour
     {
         if (other.CompareTag("Wall"))
         {
-            Debug.Log("wall");
             IsBlockedByWall = true;
         }
     }

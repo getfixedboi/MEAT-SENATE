@@ -10,7 +10,7 @@ public class Grabbable : Interactable
     public static bool LockShooting = false;
     private bool _isGrabbed = false;
     private static readonly float _grabDistanceMultiplier = 1.6f;
-    private static readonly float _grabDuration = 0.1f; // Время, за которое объект будет подбираться
+    private static readonly float _grabDuration = 0.1f;
     private Rigidbody _rb;
     private Rigidbody _rbCamera;
     protected override void Awake()
@@ -24,7 +24,7 @@ public class Grabbable : Interactable
     }
     public override sealed void OnFocus()
     {
-        //Empty
+
     }
 
     public override sealed void OnInteract()
@@ -53,26 +53,22 @@ public class Grabbable : Interactable
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
 
-        // Определяем целевую позицию для подбора
         Vector3 targetPosition = PlayerCameraMovement.Instance.transform.position +
                                  PlayerCameraMovement.Instance.transform.forward * _grabDistanceMultiplier;
 
-        // Текущее положение объекта
         Vector3 startPosition = gameObject.transform.position;
 
         float elapsedTime = 0f;
 
         while (elapsedTime < _grabDuration)
         {
-            // Вычисляем интерполяцию
             float t = elapsedTime / _grabDuration;
             gameObject.transform.position = Vector3.Lerp(startPosition, targetPosition, t);
 
             elapsedTime += Time.deltaTime;
-            yield return null; // Ждем до следующего кадра
+            yield return null;
         }
 
-        // Устанавливаем окончательную позицию и флаг схваченности
         gameObject.transform.position = targetPosition;
         gameObject.transform.SetParent(PlayerCameraMovement.Instance.transform);
         _isGrabbed = true;
@@ -82,22 +78,24 @@ public class Grabbable : Interactable
     {
         if (_isGrabbed)
         {
-			_rb.velocity = _rbCamera.velocity;
-            // transform.position = PlayerCameraMovement.Instance.transform.position +
-            //                      PlayerCameraMovement.Instance.transform.forward * _grabDistanceMultiplier;
+            _rb.velocity = _rbCamera.velocity;
+            _rb.angularVelocity = _rbCamera.angularVelocity;
+
+            Vector3 targetPosition = PlayerCameraMovement.Instance.transform.position +
+                                     PlayerCameraMovement.Instance.transform.forward * _grabDistanceMultiplier;
+
+            _rb.MovePosition(targetPosition);
         }
     }
 
     protected void Throw(bool b = false)
     {
         gameObject.transform.SetParent(null);
-        // Определяем расстояние, на которое выкинем объект
-        float throwDistance = 6f; // Вы можете изменить это значение по своему усмотрению
 
-        // Вычисляем направление броска
+        float throwDistance = 6f;
+
         Vector3 throwDirection = PlayerCameraMovement.Instance.transform.forward;
 
-        // Применяем силу к объекту для броска
         Rigidbody rb = gameObject.GetComponent<Rigidbody>();
         if (rb != null)
         {
@@ -108,7 +106,6 @@ public class Grabbable : Interactable
             }
         }
 
-        // Устанавливаем флаг, что объект больше не схвачен
         gameObject.GetComponent<Grabbable>()._isGrabbed = false;
         LockShooting = false;
     }

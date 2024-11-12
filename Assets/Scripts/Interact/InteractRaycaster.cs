@@ -112,7 +112,7 @@ public class InteractRaycaster : MonoBehaviour
             _lastInteractable = null;
         }
 
-        _guideText.text = ""; // Сбрасываем текст подсказки
+        _guideText.text = "";
     }
 
     private void EnabledTabMode()

@@ -66,7 +66,7 @@ public class DamageText : MonoBehaviour
     {
         if (_distanceToPlayer < 2f) // 1
         {
-            _textComponent.fontSize = 3;
+            _textComponent.fontSize = 4;
 
             _textRushTime = 0.15f;
 
@@ -79,7 +79,7 @@ public class DamageText : MonoBehaviour
         }
         else if (_distanceToPlayer >= 2f && _distanceToPlayer <= 4f) // 2
         {
-            _textComponent.fontSize = 4;
+            _textComponent.fontSize = 5;
 
             _textRushTime = 0.15f;
 
