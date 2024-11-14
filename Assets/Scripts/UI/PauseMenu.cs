@@ -25,6 +25,7 @@ public class PauseMenu : MonoBehaviour
         _selfRef.gameObject.SetActive(false);
         _volumeSlider.value = AudioListener.volume;
         _mouseSensitivitySlider.value = _cameraMovement.MouseSensivity;
+        ToggleVSync();
     }
 
     private void Update()
