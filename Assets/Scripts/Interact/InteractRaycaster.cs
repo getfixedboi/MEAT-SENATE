@@ -50,6 +50,8 @@ public class InteractRaycaster : MonoBehaviour
             DisabledTabMode();
         }
 
+        Physics.SyncTransforms();
+
         // Проверка луча
         if (Physics.Raycast(_mainCamera.transform.position, _mainCamera.transform.forward, out _hit, _interactDistance))
         {

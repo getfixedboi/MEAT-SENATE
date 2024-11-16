@@ -9,7 +9,7 @@ public class Grabbable : Interactable
 {
     public static bool LockShooting = false;
     private bool _isGrabbed = false;
-    private static readonly float _grabDistanceMultiplier = 1.6f;
+    private static readonly float _grabDistanceMultiplier = 1.5f;
     private static readonly float _grabDuration = 0.1f;
     private Rigidbody _rb;
     private Rigidbody _rbCamera;
@@ -24,7 +24,7 @@ public class Grabbable : Interactable
     }
     public override sealed void OnFocus()
     {
-
+        //ХУЙНЯ ХУЙНЯ ХУЙНЯ ХУЙНЯ ХУЙНЯ ХУЙНЯ ХУЙНЯ ХУЙНЯ ХУЙНЯ ХУЙНЯ ХУЙНЯ ХУЙНЯ ХУЙНЯ ХУЙНЯ ХУЙНЯ ХУЙНЯ ХУЙНЯ ХУЙНЯ 
     }
 
     public override sealed void OnInteract()
@@ -81,10 +81,7 @@ public class Grabbable : Interactable
             _rb.velocity = _rbCamera.velocity;
             _rb.angularVelocity = _rbCamera.angularVelocity;
 
-            Vector3 targetPosition = PlayerCameraMovement.Instance.transform.position +
-                                     PlayerCameraMovement.Instance.transform.forward * _grabDistanceMultiplier;
-
-            _rb.MovePosition(targetPosition);
+            _rb.velocity = _rbCamera.velocity;
         }
     }
 
