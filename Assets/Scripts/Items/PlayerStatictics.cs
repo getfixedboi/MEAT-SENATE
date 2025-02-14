@@ -55,11 +55,11 @@ public class PlayerStatictics : MonoBehaviour
     public GameObject ItemGrid;
     public GameObject ModGrid;
 
-    public static GameObject Instance;
+    public static PlayerStatictics Instance;
 
     private void Awake()
     {
-        Instance = this.gameObject;
+        Instance = this;
         СurrentHP = MaxHP;
         _healthText.text = $"{СurrentHP}/{MaxHP}";
     }
@@ -84,8 +84,9 @@ public class PlayerStatictics : MonoBehaviour
         if (_invincibility) return;
 
         СurrentHP -= inflictedDamage;
-        PlayerProgress.ReceivedDamage += inflictedDamage;
+        LevelManager.Instance.ReceivedDamage += inflictedDamage;
         StartCoroutine(C_TemporaryInvinsibility());
+         _healthText.text = $"{СurrentHP}/{MaxHP}";
     }
 
     private IEnumerator C_TemporaryInvinsibility()

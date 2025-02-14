@@ -98,7 +98,7 @@ public abstract class EnemyBehaviour : MonoBehaviour
             if (currentHP <= 0)
             {
                 isDead = true;
-                PlayerProgress.KillCount++;
+                LevelManager.Instance.AmountOfKills++;
                 Death();
             }
         }
